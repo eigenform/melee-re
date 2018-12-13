@@ -38,7 +38,7 @@ py/
 └── melee-stack-dump			# Unwind call chains from a ram dump of the stack region
 ```
 
-## Function-table mapping (current count: `4367` functions named)
+## Function-table mapping (current count: `5211` functions named)
 The `py/analysis/` directory contains scripts which are intended to be used
 with a Dolphin ram-dump and GALE01 symbol file. These scripts will walk various
 function tables and produce symbols. They currently expect that you move a 

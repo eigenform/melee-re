@@ -1125,6 +1125,8 @@ class minSceneShared(Enum):
 
 # -----------------------------------------------------------------------------
 # Item IDs
+
+# 0x00
 class itemID(Enum):
     Capsule = 0x00
     Box = 0x01
@@ -1170,19 +1172,149 @@ class itemID(Enum):
     Flower = 0x29
     YoshisEgg = 0x2a
 
-    # These DO NOT correspond to item IDs - they are vestigial!
-    OldOtto = 0x2b
-    OldOcta = 0x2c
+    # These DO NOT correspond to item IDs - they are vestigial parts 
+    # of the array with regular item function tables!
+    # OldOtto = 0x2b
+    # OldOcta = 0x2c
 
-class monsterID(Enum):
-    # starting at 0x2b
+# 0x2b
+class charProjectile(Enum):
     Goomba = 0x0
     Redead = 0x1
     Octarok = 0x2
     Ottosea = 0x3
     OctarokProjectile = 0x4
 
+    MarioFireball = 0x5
+    DrMarioPill = 0x6
+    KirbyCutter = 0x7
+    KirbyHammer = 0x8
+    KirbyTauntStar = 0x9
+    Unk0a = 0xa
+    FoxLaser = 0xb
+    FalcoLaser = 0xc
+    FoxShadow = 0xd
+    FalcoShadow = 0xe
+    LinkBomb = 0xf
+    YLinkBomb = 0x10
+    LinkBoomerang = 0x11
+    YLinkBoomerang = 0x12
+    LinkHookshot = 0x13
+    YLinkHookshot = 0x014
+    Arrow = 0x15
+    FireArrow = 0x16
 
+    PKFire = 0x17
+    PKFireColumn = 0x18
+    PKFlash = 0x19
+
+    PKThunder1 = 0x1a
+    PKThunder2 = 0x1b
+    PKThunder3 = 0x1c
+    PKThunder4 = 0x1d
+    PKThunder5 = 0x1e
+
+    FoxBlaster = 0x1f
+    FalcoBlaster = 0x20
+    LinkBow = 0x21
+    YLinkBow = 0x22
+    PKFlashExplosion = 0x23
+    SheikNeedleThrown = 0x24
+    SheikNeedleCharge = 0x25
+    PikachuThunder = 0x26
+    PichuThunder = 0x27
+    MarioCape = 0x28
+    DrMarioCape = 0x29
+    SheikSmokeUpB = 0x2a
+    YoshiEggUpB = 0x2b
+    YoshiUnkDownB = 0x2c
+    YoshiStarsDownB = 0x2d
+    PikachuNeutralBAir = 0x2e
+    PikachuNeutralBGround = 0x2f
+
+    PichuNeutralBAir = 0x30
+    PichuNeutralBGround = 0x31
+
+    SamusBombDownB = 0x32
+    SamusChargeShot = 0x33
+    SamusMissile = 0x34
+    SamusGrapple = 0x35
+
+    Unk36 = 0x36
+    Unk37 = 0x37
+
+    PeachTurnip = 0x38
+    BowserFire = 0x39
+    NessBat = 0x3a
+    NessYoyo = 0x3b
+    PeachParasolUpB = 0x3c
+    PeachToadNeutralB = 0x3d
+
+    # not certain
+    LuigiFire = 0x3e
+    ICsIceNeutralB = 0x3f
+    ICsBlizzardDownB = 0x40
+    DinsFire = 0x41
+    DinsFireExplosion = 0x42
+    Unk43 = 0x43
+    Unk44 = 0x44
+    MewtwoShadowBall = 0x45
+    ICsChainUpB = 0x46
+
+    GnWNeutralAPesticide = 0x47
+    GnWDTiltManhole = 0x48
+    GnWFsmashFire = 0x49
+    GnWParashute = 0x4a
+    GnWBAirTurtle = 0x4b
+    GnWUAir = 0x4c
+    GnWHammerSideB = 0x4d
+    Unk4e = 0x4e
+    GnWPan = 0x4f
+    YLinkMilk = 0x50
+    GnWParachute = 0x51
+
+    Unk52 = 0x52
+    Unk53 = 0x53
+    Unk54 = 0x54
+    Unk55 = 0x55
+    Unk56 = 0x56
+
+    # These are DIFFERENT from the data sheet (and correct)!
+    KirbyMario = 0x57
+    KirbyDrMario = 0x58
+    KirbyLuigi = 0x59
+    KirbyICs = 0x5a
+    KirbyPeach = 0x5b
+    KirbyToad = 0x5c
+    KirbyFoxLaser = 0x5d
+    KirbyFalcoLaser = 0x5e
+    KirbyFoxBlaster = 0x5f
+    KirbyFalcoBlaster = 0x60
+    KirbyLinkArrow = 0x61
+    KirbyYLinkArrow = 0x62
+    KirbyLinkBow = 0x63
+    KirbyYLinkBow = 0x64
+    KirbyMewtwo = 0x65
+    KirbyNess = 0x66
+    KirbyNessExplosion = 0x67
+    KirbyPikachuLightningAir = 0x68
+    KirbyPikachuLightningGround= 0x69
+    KirbyBPichuLightningAir = 0x6a
+    KirbyBPichuLightningGround = 0x6b
+    KirbySamus = 0x6c
+    KirbySheikNeedleThrown = 0x6d
+    KirbySheikNeedleCharge = 0x6e
+    KirbyBowser = 0x6f
+    KirbyGnWBacon = 0x70
+    KirbyGnWPan = 0x71
+
+    Unk72 = 0x72
+    Unk73 = 0x73
+    Unk74 = 0x74
+    Coin = 0x75
+
+
+# 0xa0
 class pokemonID(Enum):
     Goldeen = 0x0
     Chicorita = 0x1
@@ -1215,6 +1347,7 @@ class pokemonID(Enum):
     Marill = 0x1c
     Venusaur = 0x1d
 
+# 0xbf
 class pokemonProjectile(Enum):
     Chicorita = 0x0
     Blastoise = 0x1
@@ -1233,137 +1366,24 @@ class pokemonProjectile(Enum):
     Chansey = 0xe
     Cyndaquil = 0x0f
 
-class charProjectile(Enum):
-    MarioFireball = 0x0
-    DrMarioPill = 0x1
-    KirbyCutter = 0x2
-    KirbyHammer = 0x3
-    KirbyTauntStar = 0x4
-    Unk5 = 0x5
-    FoxLaser = 0x6
-    FalcoLaser = 0x7
-    FoxShadow = 0x8
-    FalcoShadow = 0x9
-    LinkBomb = 0xa
-    YLinkBomb = 0xb
-    LinkBoomerang = 0xc
-    YLinkBoomerang = 0xd
-    LinkHookshot = 0xe
-    YLinkHookshot = 0x0f
-    Arrow = 0x10
-    FireArrow = 0x11
-    PKFire = 0x12
-    PKFlash1 = 0x13
-    PKFlash2 = 0x14
-    PKThunder = 0x15
+# 0xd0
+class monsterID(Enum):
+    OldGoomba = 0x00
+    Target = 0x01
+    Shyguy = 0x02
+    GreenKoopa = 0x03
+    RedKoopa = 0x04
+    Likelile = 0x05
+    OldRedead = 0x06
+    OldOctorok = 0x07
+    OldOttosea = 0x08
+    WhiteBear = 0x09
+    Klap = 0x0a
+    GreenShell = 0x0b
+    RedShell = 0x0c
 
-    # These are empty in the global function table ( but the pointer to
-    # state is still there)
-    Empty16 = 0x16
-    Empty17 = 0x17
-    Empty18 = 0x18
-    Empty19 = 0x19
-
-    Unk1a = 0x1a
-    Unk1b = 0x1b
-    Unk1c = 0x1c
-    Unk1d = 0x1d
-    Unk1e = 0x1e
-    Unk1f = 0x1f
-
-    FoxBlaster = 0x20
-    FalcoBlaster = 0x21
-    LinkArrow = 0x22
-    YoungLinkArrow = 0x23
-    PKFlashExplosion = 0x24
-    NeedleThrown = 0x25
-    Needle = 0x26
-    PikachuThunder = 0x27
-    PichuThunder = 0x28
-    MarioCape = 0x29
-    DrMarioCape = 0x2a
-    SheikSmoke = 0x2b
-    YoshiEggUpB = 0x2c
-    YoshiEggNeutralB = 0x2d
-    YoshiStars = 0x2e
-
-    PikachuThunder_unk0 = 0x2f
-    PikachuThunder_unk1 = 0x30
-    PichuThunder_unk0 = 0x31
-    PichuThunder_unk1 = 0x32
-    SamusBomb = 0x33
-    SamusChargeShot = 0x34 
-    SamusMissile = 0x35
-    SamusGrapple = 0x36
-    SheikChain = 0x37
-    Unk38 = 0x38
-    PeachTurnip = 0x39
-    BowserFlame = 0x3a
-    NessBat = 0x3b
-    NessYoyo = 0x3c
-    PeachParasol = 0x3d
-    PeachToad = 0x3e
-    LuigiFire = 0x3f
-    ICsIce = 0x40
-    ICsBlizzard = 0x41
-    ZeldaFire = 0x42
-    ZeldaFireExplosion = 0x43
-    Unk44 = 0x44
-    ToadSpore = 0x45
-    MewtwoShadowBall = 0x46
-    ICsUpB = 0x47
-    GnWPesticide = 0x48
-    GnWManhole = 0x49
-    GnWFire = 0x4a
-    GnWParashute = 0x4b
-    GnWTurtle = 0x4c
-    GnWSperky = 0x4d
-    GnWHammer = 0x4e
-    Unk4f = 0x4f
-    GnWPan = 0x50
-    YLinkMilk = 0x51
-    GnWFirefighter = 0x52
-    MasterhandLaser = 0x53
-    MasterhandBullet = 0x54
-    CrazyhandLaser = 0x55
-    CrazyhandBullet = 0x56
-    CrazyhandBomb = 0x57
-
-    # I think this is just the previous section at 0x20 but copied over?
-    KirbyBMario = 0x58
-    KirbyBDrMario = 0x59
-    KirbyBLuigi = 0x5a
-    KirbyBICs = 0x5b
-    KirbyBPeach = 0x5c
-    KirbyBToad = 0x5d
-    KirbyBFoxLaser = 0x5e
-    KirbyBFalcoLaser = 0x5f
-    KirbyBFoxBlaster = 0x60
-    KirbyBFalcoBlaster = 0x61
-    KirbyBLinkArrow = 0x62
-    KirbyBYLinkArrow = 0x63
-    KirbyBFLinkArrow2 = 0x64
-    KirbyBFYLinkArrow2 = 0x65
-    KirbyBMewtwo = 0x66
-    KirbyBNess = 0x67
-    KirbyBNessExplosion = 0x68
-    KirbyBPikachuThunder = 0x69
-    KirbyBPikachuThunder2= 0x6a
-    KirbyBPichuThunder = 0x6b
-    KirbyBPichuThunder2 = 0x6c
-    KirbyBSamus = 0x6d
-    KirbyBSheikThrownNeedle = 0x6e
-    KirbyBSheikGroundNeedle = 0x6f
-    KirbyBBowser = 0x70
-    KirbyBGnW = 0x71
-    Unk72 = 0x72
-    Unk73 = 0x73
-    Unk74 = 0x74
-    Coin = 0x75
-    Unk76 = 0x76
-
+# 0xdd
 class stageItemID(Enum):
-    # starting at 0xdd
     Tingle = 0x0
     UnkDE = 0x1
     UnkDF = 0x2
