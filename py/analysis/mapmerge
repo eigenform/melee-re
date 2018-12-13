@@ -1,0 +1,54 @@
+#!/usr/bin/python3
+""" mapmerge
+Merge new symbols into a Dolphin symbol map. 
+
+    - Only supports manipulating symbols in the .text section
+    - Write to standard output; avoid manipulating files for now
+"""
+
+MAPFMT = "{} {} {} 0 {}"
+
+import sys
+
+if (len(sys.argv) < 3):
+        print("usage: mapmerge <original map> <new symbols>")
+        exit()
+
+data = {}
+text = {}
+new = {}
+state = {'text': None, 'data': None }
+with open(sys.argv[1], "r") as f:
+    for line in f:
+        entry = line.strip("\n").split(" ")
+        if (".text section layout" in line):
+            state['text'] = True
+            continue
+        if (".data section layout" in line):
+            state['data'] = True
+            continue
+        if (len(entry) < 5):
+            continue
+        if (state['text']):
+            text[entry[0]] = { 'addr': entry[0], 'size': entry[1], 
+                    'name': " ".join([x for x in entry[4:]]), }
+        if (state['data']):
+            data[entry[0]] = { 'addr': entry[0], 'size': entry[1], 
+                    'name': " ".join([x for x in entry[4:]]), }
+with open(sys.argv[2], "r") as f:
+    for line in f:
+        entry = line.strip("\n").split(" ")
+        new[entry[0]] = {'addr': entry[0], 'size': entry[1], 
+                'name': " ".join([x for x in entry[4:]]), }
+
+# Just replace any symbols we find in the original, for now
+for entry in new:
+    text[entry]['name'] = new[entry]['name']
+
+print(".text section layout")
+for entry in text:
+    print(MAPFMT.format(entry, text[entry]['size'], entry, text[entry]['name']))
+print()
+print(".data section layout")
+for entry in data:
+    print(MAPFMT.format(entry, data[entry]['size'], entry, data[entry]['name']))

@@ -1,0 +1,58 @@
+#!/usr/bin/python3
+''' dolparse
+Pull out information about DOL sections from the header.
+'''
+
+import sys
+from struct import pack, unpack
+
+if (len(sys.argv) < 2):
+    print("usage: dolparse <input .DOL file>")
+    exit(-1)
+filename = sys.argv[1]
+
+header = {
+            'text': [], 
+            'data': [], 
+            'bss': { 'size': None, 'addr': None, }, 
+            'entrypoint': None
+}
+
+for i in range(0,7):
+    header['text'].append( {'addr': None, 'size': None, 'off': None} )
+for i in range(0,11):
+    header['data'].append( {'addr': None, 'size': None, 'off': None} )
+
+with open(filename, "rb") as f:
+    for i in range(0,7):
+        header['text'][i]['off']  = unpack(">L", f.read(4))[0]
+    for i in range(0,11):
+        header['data'][i]['off']  = unpack(">L", f.read(4))[0]
+    for i in range(0,7):
+        header['text'][i]['addr'] = unpack(">L", f.read(4))[0]
+    for i in range(0,11):
+        header['data'][i]['addr'] = unpack(">L", f.read(4))[0]
+    for i in range(0,7):
+        header['text'][i]['size'] = unpack(">L", f.read(4))[0]
+    for i in range(0,11):
+        header['data'][i]['size'] = unpack(">L", f.read(4))[0]
+    header['bss']['addr'] = unpack(">L", f.read(4))[0]
+    header['bss']['size'] = unpack(">L", f.read(4))[0]
+    header['entrypoint']  = unpack(">L", f.read(4))[0]
+
+for i in range(0, 7):
+    if (header['text'][i]['size'] != 0):
+        print("Text section {}:\t0x{:08x} - 0x{:08x}, size=0x{:08x}, offset=0x{:08x}".format(i, 
+            header['text'][i]['addr'], (header['text'][i]['addr'] + header['text'][i]['size']),
+            header['text'][i]['size'], header['text'][i]['off']))
+
+for i in range(0, 11):
+    if (header['data'][i]['size'] != 0):
+        print("Data section {}:\t0x{:08x} - 0x{:08x}, size=0x{:08x}, offset=0x{:08x}".format(i, 
+            header['data'][i]['addr'], (header['data'][i]['addr'] + header['data'][i]['size']),
+            header['data'][i]['size'], header['data'][i]['off']))
+
+print("BSS section:\t0x{:08x} - 0x{:08x}".format(header['bss']['addr'], 
+    (header['bss']['addr'] + header['bss']['size'])))
+
+print("Entrypoint:\t0x{:08x}".format(header['entrypoint']))

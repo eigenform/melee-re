@@ -1,0 +1,185 @@
+#!/usr/bin/python3
+""" melee-stack-dump
+Script for naively pulling some useful info from binary dumps of Melee's
+stack region in memory. Expects a GALE01 Dolphin symbol map, a GALE01 .DOL, 
+and a 0x10000-byte dump of Melee's stack region. AFAIK the dimensions of 
+the stack region assumed here are specific to NTSC 1.02.
+
+If you're using Dolphin, you can produce one of these with the 'Dump MRAM'
+feature in the debugger, and then with something like:
+
+        dd if=~/.local/share/dolphin-emu/Dump/ram.raw   \
+            skip=$((0x004dec00)) count=$((0x10000))     \
+            of=stack_region.bin bs=1
+
+The procedure here is basically: (a) find something that looks like a saved 
+stack pointer [some value between 0x804dec00 and 0x804eec00], and then (b) 
+follow the chain back until it terminates. A saved LR value always seems to
+be the word adjacent to the saved SP. We use the DOL .text regions to help
+disambiguate valid LR addresses, and then the Dolphin map for attempting to
+resolve symbols.
+
+The utility of this script diminishes if you don't have some value of r1 to
+help determine which frame you're in; however, it may be at-least vaguely 
+useful in diagnosing crashes during situations where Melee fails to cleanly 
+invoke OSReport during exception handling - especially on hardware. The 
+majority of the output will be noise (basically, vestigial fragments of stack 
+frames that may or may not have been written over earlier during execution).
+"""
+
+from struct import unpack, pack
+from binascii import hexlify
+from sys import argv
+
+STACK_TOP    = 0x804dec00
+STACK_BASE   = 0x804eec00
+STACK_SIZE   = 0x00010000
+symbols = []
+data = []
+
+dol = { 'text': [], 'data': [], 'bss': { 'size': None, 'addr': None, },
+        'entrypoint': None }
+
+def is_sp(val):
+    """ Return true if the value is potentially a stack pointer """
+    if ((val < STACK_BASE) and (val > STACK_TOP)):
+        return True
+    else:
+        return None
+
+def is_lr(val):
+    """ Return true if the value is potentially a saved LR """
+    if ((val > STACK_BASE) or (val < STACK_TOP)):
+        #if ((val > 0x80000000) and (val < 0x817fffff)):
+        for region in dol['text']:
+            region_end = region['addr'] + region['size']
+            if ((val > region['addr']) and (val < region_end)):
+                return True
+        return None
+    else:
+        return None
+
+def parse_map(filename):
+    """ Convert a Dolphin mapfile into a list of symbols """
+    num = 0;
+    with open(filename, "r") as f:
+        for line in f:
+            symbol = []
+            line = line.strip()
+            entry = line.split(" ")
+            if ((entry[0] == '') or (entry[0] == '.text') 
+                                 or (entry[0] == '.data')):
+                continue
+            symbol = [int(entry[0], 16), int(entry[1], 16), entry[4]]
+            symbols.append(symbol)
+    print("[*] Read GALE01 map @ {}".format(filename))
+
+def parse_dol(filename):
+    """ Parse a DOL header and fill out a dict with region boundaries """
+    for i in range(0,7):
+        dol['text'].append( {'addr': None, 'size': None, } )
+    for i in range(0,11):
+        dol['data'].append( {'addr': None, 'size': None, } )
+    with open(filename, "rb") as f:
+        for i in range(0,7):
+            dol['text'][i]['off']  = unpack(">L", f.read(4))[0]
+        for i in range(0,11):
+            dol['data'][i]['off']  = unpack(">L", f.read(4))[0]
+        for i in range(0,7):
+            dol['text'][i]['addr'] = unpack(">L", f.read(4))[0]
+        for i in range(0,11):
+            dol['data'][i]['addr'] = unpack(">L", f.read(4))[0]
+        for i in range(0,7):
+            dol['text'][i]['size'] = unpack(">L", f.read(4))[0]
+        for i in range(0,11):
+            dol['data'][i]['size'] = unpack(">L", f.read(4))[0]
+        dol['bss']['addr'] = unpack(">L", f.read(4))[0]
+        dol['bss']['size'] = unpack(">L", f.read(4))[0]
+        dol['entrypoint']  = unpack(">L", f.read(4))[0]
+    print("[*] Read DOL @ {}".format(filename))
+    for region in dol['text']:
+        if (region['addr'] != 0):
+            print("    .text region [{} - {}]".format(hex(region['addr']), 
+                        hex(region['addr'] + region['size'])))
+
+def resolve(addr):
+    """ Resolve some address into a symbol string """
+    for symbol in symbols:
+        sym_end = symbol[0] + symbol[1]
+        if ((addr > symbol[0]) and (addr < sym_end)):
+            return symbol[2]
+    return "NO SYMBOL FOUND"
+
+
+''' # Handle user arguments here
+-------------------------------------------------------------------------------
+'''
+
+if (len(argv) < 4):
+    print("usage: melee-stack-dump <binary stack dump> <GALE01 map> <GALE01 dol>")
+    exit(0)
+
+BINFILE = argv[1]
+MAPFILE = argv[2]
+DOLFILE = argv[3]
+
+# Deal with the Dolphin symbol map
+parse_map(MAPFILE)
+parse_dol(DOLFILE)
+
+# Read in binary data
+with open(BINFILE, "rb") as f:
+    data = f.read()
+    if (len(data) != STACK_SIZE):
+        print("[!] Input must be exactly {} bytes".format(STACK_SIZE))
+        exit(0)
+    print("[*] Read GALE01 stack region @ {}".format(BINFILE))
+
+
+''' # A main loop goes here
+-------------------------------------------------------------------------------
+'''
+
+cur = 0
+backchain = []
+
+while (cur < 0x10000):
+    val     = unpack(">L", data[cur:cur+4])[0]
+    addr    = cur + STACK_TOP
+
+    # Skip if it isn't a valid pointer
+    if ((val < 0x80000000) or (val > 0x817fffff)):
+        cur += 4
+        continue
+
+    if (is_sp(val)):
+        #print("{}: POTENTIAL SAVED SP {}".format(hex(addr), hex(val)))
+        next_word = unpack(">L", data[cur+4:cur+8])[0]
+        if (is_lr(next_word)):
+            print("=========================================")
+            print("BACKCHAIN CANDIDATE @ {}".format(hex(addr)))
+            print("\t{}: LR={} ({})".format(hex(addr), hex(next_word+4),
+                resolve(next_word+4)))
+            back_off = val - STACK_TOP
+            back_addr = unpack(">L", data[back_off:back_off+4])[0]
+            while (is_sp(back_addr)):
+                back_next_word = unpack(">L", data[back_off+4:back_off+8])[0]
+                if (is_lr(back_next_word)):
+                    print("\t{}: LR={} ({})".format(hex(back_addr),
+                        hex(back_next_word-4), resolve(back_next_word-4)))
+                    back_off = back_addr - STACK_TOP
+                    back_addr = unpack(">L", data[back_off:back_off+4])[0]
+                else: 
+                    break
+            print("")
+
+    # Found a saved LR
+    if (is_lr(val)):
+        for symbol in symbols:
+            symbol_end = symbol[0] + symbol[1]
+            if ((val > symbol[0]) and (val < symbol_end)):
+                #print("{}: POTENTIAL LR {} in {}".format(hex(addr), hex(val), symbol[2]))
+                break;
+
+    # Skip to the next word
+    cur += 4
