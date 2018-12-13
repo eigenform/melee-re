@@ -14,9 +14,12 @@ Various scripts and documentation for understanding Melee internals.
 
 Markdown-formatted documentation on various things lives in `docs/`.
 
-- [Notes on memory layout](docs/LINKERMAP.md)
-- [Notes on data structures](docs/STRUCT.md)
-* [Notes on debug functionality](docs/DEBUG.md)
+| Table-of-Contents  | 
+| ------------- | 
+| [Notes on the DOL/memory layout](docs/LINKERMAP.md)   |
+| [Notes on various data structures/function tables](docs/STRUCT.md)    |
+| [Notes on Melee's debug menu functionality](docs/DEBUG.md) |
+
 
 ## Tools  
 
@@ -51,4 +54,3 @@ in this directory contains my copy of all script output which _should_ result
 in a list of unique functions. As of right now, there are no guarantees that 
 this file is free of duplicates, so be careful if you decide to merge this 
 into your current symbol map.
-
