@@ -425,6 +425,13 @@ for idx, entry in enumerate(unsorted_functions):
 for entry in sorted_functions:
     addr = entry['addr']
 
+    # 0x800761c8 is a generic camera behaviour function
+    # that occurs over 1000 times in this table. This occurs
+    # elsewhere (like in the global table), so just ignore it here
+    if (addr == 0x800761c8):
+        #functions[addr]['name'] = "AS_Generic_cameraBehaviour"
+        continue
+
     # If the function appears unique, add it to the list of output
     if (functions.get(addr) == None):
         functions[addr] = entry
@@ -432,12 +439,7 @@ for entry in sorted_functions:
     # Otherwise, deal with duplicate functions
     else:
         
-        # 0x800761c8 is a generic camera behaviour function
-        # that occurs over 1000 times in this table.
-        if (addr == 0x800761c8):
-            functions[addr]['name'] = "AS_Generic_cameraBehaviour"
-            continue
-
+    
         # Duplicates across character in a table
         preferred = prefer_char(functions.get(addr), entry)
         if (preferred != None):
