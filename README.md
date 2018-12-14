@@ -1,17 +1,10 @@
 ![hosaka-corp/melee-re](banner.png)
 
-
+<br>
+<br>
 
 
 Various scripts and documentation for understanding Melee internals.
-
-
-```
-.
-├── docs		# Documentation/collected notes
-├── meta_GALE01.map	# Dolphin symbol map
-└── py			# growing collection of python scripts
-```
 
 
 ## Documentation
@@ -41,6 +34,9 @@ py/
 ├── dolparse				# Parse DOL headers
 └── melee-stack-dump			# Unwind call chains from a ram dump of the stack region
 ```
+
+## Symbol map
+My current symbol map can be found in [`meta_GALE01.map`](meta_GALE01.map).
 
 ## Function-table mapping (current count: `5760` functions named)
 The `py/analysis/` directory contains scripts which are intended to be used
