@@ -18,7 +18,7 @@ class anim_ft(function_table):
         self.idx = self.data[0]
         self.functions = {
             'animInterrupt': self.data[3],
-            'inputInterrupt': self.data[4],
+            'IASAInterrupt': self.data[4],
             'actionPhysics': self.data[5],
             'collisionInterrupt': self.data[6],
             'cameraBehaviour': self.data[7],
@@ -156,7 +156,7 @@ for addr in dupes:
        if (len(uniq_funcname) == 1):
            dupes[addr]['newname'] = "AS_{}_{}".format("FallAerial", uniq_funcname[0])
     if (as_id == [32, 33, 34]):
-       if ((len(uniq_funcname) == 1) and (uniq_funcname[0] == "inputInterrupt")):
+       if ((len(uniq_funcname) == 1) and (uniq_funcname[0] == "IASAInterrupt")):
            dupes[addr]['newname'] = "AS_{}_{}".format("FallAerial", uniq_funcname[0])
 
 

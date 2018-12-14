@@ -21,7 +21,7 @@ class anim_ft(function_table):
         self.idx = self.data[0]
         self.functions = {
             'animInterrupt': self.data[3],
-            'inputInterrupt': self.data[4],
+            'IASAInterrupt': self.data[4],
             'actionPhysics': self.data[5],
             'collisionInterrupt': self.data[6],
             'cameraBehaviour': self.data[7],

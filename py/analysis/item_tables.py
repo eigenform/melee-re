@@ -21,7 +21,7 @@ class item_ft(function_table):
         super(item_ft, self).__init__(*args, **kwargs)
 
         # Think this also has functions in it
-        self.unk_ptr = self.data[0]
+        self.state_table_ptr = self.data[0]
 
         self.functions = {
                 'OnCreate': self.data[1],
@@ -40,58 +40,27 @@ class item_ft(function_table):
                 'unk_8': self.data[14],
         }
 
-def prefer_charproj_id(old_entry, new_entry):
-    """
-    In the character projectile table, prefer certain names over others.
-    """
+class item_state_ft(function_table):
+    def __init__(self, *args, **kwargs):
+        super(item_state_ft, self).__init__(*args, **kwargs)
 
-    old_idx = old_entry['table_idx']
-    new_idx = new_entry['table_idx']
-
-    
-    # Falco/FoxLaser
-    if ((old_idx == 6) and (new_idx == 7)):
-        return new_entry
-    if ((new_idx == 6) and (old_idx == 7)):
-        return old_entry
-    # Falco/FoxShadow
-    if ((old_idx == 9) and (new_idx == 8)):
-        return new_entry
-    if ((new_idx == 9) and (old_idx == 8)):
-        return old_entry
-
-    # YLink/LinkBomb
-    if ((old_idx == 11) and (new_idx == 10)):
-        return new_entry
-    if ((new_idx == 11) and (old_idx == 10)):
-        return old_entry
-    # YLink/LinkBoomerang
-    if ((old_idx == 13) and (new_idx == 12)):
-        return new_entry
-    if ((new_idx == 13) and (old_idx == 12)):
-        return old_entry
-    # YLink/LinkHookshot
-    if ((old_idx == 15) and (new_idx == 14)):
-        return new_entry
-    if ((new_idx == 15) and (old_idx == 14)):
-        return old_entry
-    # Prefer "Arrow" over "FireArrow"
-    if ((old_idx == 17) and (new_idx == 16)):
-        return new_entry
-    if ((new_idx == 17) and (old_idx == 16)):
-        return old_entry
-
-    return None
+        # Think this also has functions in it
+        self.idx = self.data[0]
+        self.functions = {
+                'animInterrupt': self.data[1],
+                'actionPhysics': self.data[2],
+                'collisionInterrupt': self.data[3],
+        }
 
 
 
 functions = {}
 dupes = {}
 
+
 # Currently in ntsc102_defs.py, these item IDs are fragmented up in order to 
 # deal with the indexing of each of these arrays. In reality, each ID in each
 # of these lists is unique and monotonically increasing. Will fix later.
-
 
 
 
@@ -101,6 +70,66 @@ dupes = {}
 base = 0x803f14c4
 for item in (itemID):
     ft = item_ft(u32table(dump(base, 0x3c)))
+
+    # Walk the associated item state table
+    if (validptr(ft.state_table_ptr)):
+        state_ft = item_state_ft(u32table(dump(ft.state_table_ptr, 0x10)))
+        for funcname in state_ft.functions:
+            addr = state_ft.functions[funcname]
+            if (validptr(addr)):
+                size = getsymbolsize(addr)
+                new_name = "Item_{}_{}".format(item.name, funcname)
+                entry = {'addr': addr, 'size': size, 'name': new_name, 
+                        'state_idx': state_ft.idx, 'funcname': funcname, 
+                        'table_idx': item.value }
+                # Add to dupes bucket
+                if (dupes.get(addr) != None):
+                    new_entry = entry
+                    new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                    dupes[addr]['info'].append(new_pair)
+                    dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                    dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+                    continue
+
+                # Add to final list
+                if (functions.get(addr) == None):
+                    functions[addr] = entry
+                else:
+                    # Create new dupes bucket
+                    if (dupes.get(addr) == None):
+                        old_entry = functions.get(addr)
+                        new_entry = entry
+                        dupe_entry = {'addr': old_entry['addr'],
+                                'size': old_entry['size'],
+                                'uniq_funcname': {},
+                                'info': [],
+                                'table_idx': [],
+                        }
+                        dupes[addr] = dupe_entry
+
+                        # Add the two duplicates
+                        old_pair = "table_idx{:03x} {}".format(old_entry['table_idx'], old_entry['name'])
+                        dupes[addr]['info'].append(old_pair)
+                        dupes[addr]['table_idx'].append(old_entry['table_idx'])
+
+                        dupes[addr]['uniq_funcname'][old_entry['funcname']] = True
+
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+                        # Remove the duplicate from the final list
+                        del functions[addr]
+                    else:
+                        # Add to dupes bucket
+                        new_entry = entry
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+
 
     # Construct an entry for each function
     for funcname in ft.functions:
@@ -175,6 +204,66 @@ base = 0x803f23cc
 for item in (pokemonID):
     ft = item_ft(u32table(dump(base, 0x3c)))
 
+    # Walk the associated item state table
+    if (validptr(ft.state_table_ptr)):
+        state_ft = item_state_ft(u32table(dump(ft.state_table_ptr, 0x10)))
+        for funcname in state_ft.functions:
+            addr = state_ft.functions[funcname]
+            if (validptr(addr)):
+                size = getsymbolsize(addr)
+                new_name = "Pkmn_{}_{}".format(item.name, funcname)
+                entry = {'addr': addr, 'size': size, 'name': new_name, 
+                        'state_idx': state_ft.idx, 'funcname': funcname, 
+                        'table_idx': item.value }
+                # Add to dupes bucket
+                if (dupes.get(addr) != None):
+                    new_entry = entry
+                    new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                    dupes[addr]['info'].append(new_pair)
+                    dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                    dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+                    continue
+
+                # Add to final list
+                if (functions.get(addr) == None):
+                    functions[addr] = entry
+                else:
+                    # Create new dupes bucket
+                    if (dupes.get(addr) == None):
+                        old_entry = functions.get(addr)
+                        new_entry = entry
+                        dupe_entry = {'addr': old_entry['addr'],
+                                'size': old_entry['size'],
+                                'uniq_funcname': {},
+                                'info': [],
+                                'table_idx': [],
+                        }
+                        dupes[addr] = dupe_entry
+
+                        # Add the two duplicates
+                        old_pair = "table_idx{:03x} {}".format(old_entry['table_idx'], old_entry['name'])
+                        dupes[addr]['info'].append(old_pair)
+                        dupes[addr]['table_idx'].append(old_entry['table_idx'])
+
+                        dupes[addr]['uniq_funcname'][old_entry['funcname']] = True
+
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+                        # Remove the duplicate from the final list
+                        del functions[addr]
+                    else:
+                        # Add to dupes bucket
+                        new_entry = entry
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+
+
     # Construct an entry for each function
     for funcname in ft.functions:
         addr = ft.functions[funcname]
@@ -248,6 +337,66 @@ base = 0x803f2ad4
 for item in (pokemonProjectile):
     ft = item_ft(u32table(dump(base, 0x3c)))
 
+    # Walk the associated item state table
+    if (validptr(ft.state_table_ptr)):
+        state_ft = item_state_ft(u32table(dump(ft.state_table_ptr, 0x10)))
+        for funcname in state_ft.functions:
+            addr = state_ft.functions[funcname]
+            if (validptr(addr)):
+                size = getsymbolsize(addr)
+                new_name = "PkmnProjectile_{}_{}".format(item.name, funcname)
+                entry = {'addr': addr, 'size': size, 'name': new_name, 
+                        'state_idx': state_ft.idx, 'funcname': funcname, 
+                        'table_idx': item.value }
+                # Add to dupes bucket
+                if (dupes.get(addr) != None):
+                    new_entry = entry
+                    new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                    dupes[addr]['info'].append(new_pair)
+                    dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                    dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+                    continue
+
+                # Add to final list
+                if (functions.get(addr) == None):
+                    functions[addr] = entry
+                else:
+                    # Create new dupes bucket
+                    if (dupes.get(addr) == None):
+                        old_entry = functions.get(addr)
+                        new_entry = entry
+                        dupe_entry = {'addr': old_entry['addr'],
+                                'size': old_entry['size'],
+                                'uniq_funcname': {},
+                                'info': [],
+                                'table_idx': [],
+                        }
+                        dupes[addr] = dupe_entry
+
+                        # Add the two duplicates
+                        old_pair = "table_idx{:03x} {}".format(old_entry['table_idx'], old_entry['name'])
+                        dupes[addr]['info'].append(old_pair)
+                        dupes[addr]['table_idx'].append(old_entry['table_idx'])
+
+                        dupes[addr]['uniq_funcname'][old_entry['funcname']] = True
+
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+                        # Remove the duplicate from the final list
+                        del functions[addr]
+                    else:
+                        # Add to dupes bucket
+                        new_entry = entry
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+
+
     # Construct an entry for each function
     for funcname in ft.functions:
         addr = ft.functions[funcname]
@@ -319,6 +468,66 @@ for item in (pokemonProjectile):
 base = 0x803f3100
 for item in (charProjectile):
     ft = item_ft(u32table(dump(base, 0x3c)))
+
+    # Walk the associated item state table
+    if (validptr(ft.state_table_ptr)):
+        state_ft = item_state_ft(u32table(dump(ft.state_table_ptr, 0x10)))
+        for funcname in state_ft.functions:
+            addr = state_ft.functions[funcname]
+            if (validptr(addr)):
+                size = getsymbolsize(addr)
+                new_name = "CharProjectile_{}_{}".format(item.name, funcname)
+                entry = {'addr': addr, 'size': size, 'name': new_name, 
+                        'state_idx': state_ft.idx, 'funcname': funcname, 
+                        'table_idx': item.value }
+                # Add to dupes bucket
+                if (dupes.get(addr) != None):
+                    new_entry = entry
+                    new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                    dupes[addr]['info'].append(new_pair)
+                    dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                    dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+                    continue
+
+                # Add to final list
+                if (functions.get(addr) == None):
+                    functions[addr] = entry
+                else:
+                    # Create new dupes bucket
+                    if (dupes.get(addr) == None):
+                        old_entry = functions.get(addr)
+                        new_entry = entry
+                        dupe_entry = {'addr': old_entry['addr'],
+                                'size': old_entry['size'],
+                                'uniq_funcname': {},
+                                'info': [],
+                                'table_idx': [],
+                        }
+                        dupes[addr] = dupe_entry
+
+                        # Add the two duplicates
+                        old_pair = "table_idx{:03x} {}".format(old_entry['table_idx'], old_entry['name'])
+                        dupes[addr]['info'].append(old_pair)
+                        dupes[addr]['table_idx'].append(old_entry['table_idx'])
+
+                        dupes[addr]['uniq_funcname'][old_entry['funcname']] = True
+
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+                        # Remove the duplicate from the final list
+                        del functions[addr]
+                    else:
+                        # Add to dupes bucket
+                        new_entry = entry
+                        new_pair = "table_idx{:03x} {}".format(new_entry['table_idx'], new_entry['name'])
+                        dupes[addr]['info'].append(new_pair)
+                        dupes[addr]['table_idx'].append(new_entry['table_idx'])
+                        dupes[addr]['uniq_funcname'][new_entry['funcname']] = True
+
+
 
     # Construct an entry for each function
     for funcname in ft.functions:
@@ -486,17 +695,34 @@ for addr in dupes:
     if (addr == 0x8027c8b0):
            dupes[addr]['newname'] = "CharProjectile_GenericMonster_OnDestroy?"
 
-
-
     # Lots of Kirby's functions are duplicates: just pop off the info list and
     # check this later on when adding them back
-
     kirby_indicies = [87, 88, 89, 90, 91, 92, 101, 102, 103, 108, 109, 110,
             111, 112, 114, 116 ]
     for idx in kirby_indicies:
         if (idx in table_idx):
             dupes[addr]['info'].pop()
             dupes[addr]['table_idx'].pop()
+
+
+    # Interrupt duplicates
+    if ((table_idx == [2,3]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "Pkmn_Weezing_{}".format(uniq_funcname[0])
+    if ((table_idx == [4,5,6, 7]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "Pkmn_Charizard_{}".format(uniq_funcname[0])
+    if ((table_idx == [9, 10, 11]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "Pkmn_Lugia_{}".format(uniq_funcname[0])
+
+    if ((table_idx == [11, 12, 93, 94]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "CharProjectile_{}_{}".format("FoxLaser", uniq_funcname[0])
+    if ((table_idx == [27,28, 29, 30]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "CharProjectile_{}_{}".format("PKThunder2-5", uniq_funcname[0])
+
+    if ((table_idx == [82, 84]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "CharProjectile_{}_{}".format("Unk52and54", uniq_funcname[0])
+    if ((table_idx == [83, 85]) and (len(uniq_funcname) == 1)):
+           dupes[addr]['newname'] = "CharProjectile_{}_{}".format("Unk53and55", uniq_funcname[0])
+
 
 
     if (dupes[addr].get('newname') != None):
@@ -533,8 +759,6 @@ for addr in dupes:
         print("Duplicate entry for addr {:08x}".format(addr))
         print(json.dumps(dupes[addr]))
         print(json.dumps(functions[addr]))
-
-
 
 
 # Print symbols to standard output
