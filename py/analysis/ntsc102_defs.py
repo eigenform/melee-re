@@ -1005,6 +1005,57 @@ class actionState(Enum):
     Unk1dd = 0x1dd
     Unk1de = 0x1de
 
+class subactionID(Enum):
+    Unk28 = 0x28
+    Unk2C = 0x2c
+    Unk30 = 0x30
+    Unk34 = 0x34
+    Unk38 = 0x38
+    Unk3C = 0x3c
+    Unk40 = 0x40
+    Unk44 = 0x44
+    Unk48 = 0x48
+    Unk4C = 0x4c
+    Unk50 = 0x50
+    Unk54 = 0x54
+    Unk58 = 0x58
+    Unk5C = 0x5c
+    Unk60 = 0x60
+    Unk64 = 0x64
+    Unk68 = 0x68
+    Unk6C = 0x6c
+    Unk70 = 0x70
+    Unk74 = 0x74
+    Unk78 = 0x78
+    Unk7C = 0x7c
+    Unk80 = 0x80
+    Unk84 = 0x84
+    Unk88 = 0x88
+    Unk8C = 0x8c
+    Unk90 = 0x90
+    Unk94 = 0x94
+    Unk98 = 0x98
+    Unk9C = 0x9c
+    UnkA0 = 0xa0
+    UnkA4 = 0xa4
+    UnkA8 = 0xa8
+    UnkAC = 0xac
+    UnkB0 = 0xb0
+    UnkB4 = 0xb4
+    UnkB8 = 0xb8
+    UnkBC = 0xbc
+    UnkC0 = 0xc0
+    UnkC4 = 0xc4
+    UnkC8 = 0xc8
+    UnkCC = 0xcc
+    UnkD0 = 0xd0
+    UnkD4 = 0xd4
+    UnkD8 = 0xd8
+    UnkDC = 0xdc
+    UnkE0 = 0xe0
+    UnkE4 = 0xe4
+    UnkE8 = 0xe8
+
 
 # -----------------------------------------------------------------------------
 # Major Scene IDs

@@ -38,7 +38,7 @@ py/
 ## Symbol map
 My current symbol map can be found in [`meta_GALE01.map`](meta_GALE01.map).
 
-## Function-table mapping (current count: `5760` functions named)
+## Function-table mapping (current count: `5809` functions named)
 The `py/analysis/` directory contains scripts which are intended to be used
 with a Dolphin ram-dump and GALE01 symbol file. These scripts will walk various
 function tables and produce symbols. They currently expect that you move a 
