@@ -1367,39 +1367,36 @@ class pokemonProjectile(Enum):
     Cyndaquil = 0x0f
 
 # 0xd0
-class monsterID(Enum):
-    OldGoomba = 0x00
+class stageSpecificItems(Enum):
+    Goomba = 0x00
     Target = 0x01
     Shyguy = 0x02
     GreenKoopa = 0x03
     RedKoopa = 0x04
     Likelile = 0x05
-    OldRedead = 0x06
-    OldOctorok = 0x07
-    OldOttosea = 0x08
+    Redead = 0x06
+    Octorok = 0x07
+    Ottosea = 0x08
     WhiteBear = 0x09
     Klap = 0x0a
     GreenShell = 0x0b
     RedShell = 0x0c
-
-# 0xdd
-class stageItemID(Enum):
-    Tingle = 0x0
-    UnkDE = 0x1
-    UnkDF = 0x2
-    UnkE0 = 0x3
-    Apple = 0x4
-    HealingApple = 0x5
-    UnkE3 = 0x6
-    UnkE4 = 0x7
-    UnkE5 = 0x8
-    FlatzoneTool = 0x9
-    UnkE7 = 0xa
-    UnkE8 = 0xb
-    Birdo = 0xc
-    ArwingLaser = 0xd
-    GreatFoxLaser = 0xe
-    BirdoEgg = 0xf
+    Tingle = 0xd
+    UnkDE = 0xe
+    UnkDF = 0xf
+    UnkE0 = 0x10
+    Apple = 0x11
+    HealingApple = 0x12
+    UnkE3 = 0x13
+    UnkE4 = 0x14
+    UnkE5 = 0x15
+    FlatzoneTool = 0x16
+    UnkE7 = 0x17
+    UnkE8 = 0x18
+    Birdo = 0x19
+    ArwingLaser = 0x1a
+    GreatFoxLaser = 0x1b
+    BirdoEgg = 0x1c
 
 
 # -----------------------------------------------------------------------------
