@@ -84,115 +84,168 @@ region.
 # Text section 1: 0x80005940 - 0x803b7240, size=0x003b1900, offset=0x00002520
 
 # Static player block setters/getters seem to start around here.
-...			800322c0
+			800322c0
+
+
+# Some subaction event functions live here
+			80071028
 
 
 # This is the first instance of one of the `AnimInterrupt` functions from the
 # "global" array of animation function tables (non-character specific).
-...			8008a494
+			8008a494
+
 
 
 
 # Character OnLoad functions start here. Character-specific functions in the 
 # animation tables (for special moves?) appear to live inside these regions.
 
-...			800e0960 (onload_Mario)
+			800e0960 (onload_Mario)
 
-... 			800e2aec (onload_CaptFalcon)
+ 			800e2aec (onload_CaptFalcon)
 
-... 			800e57ac (onload_Fox)
+ 			800e57ac (onload_Fox)
 
-... 			800eae44 (onload_Link)
+ 			800eae44 (onload_Link)
 
-... 			800ee680 (onload_Kirby)
+ 			800ee680 (onload_Kirby)
 
-... 			8010d9ac (onload_DonkeyKong)
+ 			8010d9ac (onload_DonkeyKong)
 
-... 			801100ec (onload_Shiek)
+ 			801100ec (onload_Shiek)
 
-... 			8011480c (onload_Ness)
+ 			8011480c (onload_Ness)
 
-... 			8011b628 (onload_Peach)
+ 			8011b628 (onload_Peach)
 
-... 			8011ef3c (onload_Popo)
+ 			8011ef3c (onload_Popo)
 
-... 			80122edc (onload_Nana)
+ 			80122edc (onload_Nana)
 
-... 			801243e4 (onload_Pikachu)
+ 			801243e4 (onload_Pikachu)
 
-... 			8012837c (onload_Samus)
+ 			8012837c (onload_Samus)
 
-... 			8012b99c (onload_Yoshi)
+ 			8012b99c (onload_Yoshi)
 
-... 			80132abc (onload_Bowser)
+ 			80132abc (onload_Bowser)
 
-... 			801364ac (onload_Marth)
+ 			801364ac (onload_Marth)
 
-... 			80139334 (onload_Zelda)
+ 			80139334 (onload_Zelda)
 
-... 			8013c67c (onload_Jigglypuff)
+ 			8013c67c (onload_Jigglypuff)
 
-... 			80142324 (onload_Luigi)
+ 			80142324 (onload_Luigi)
 
-... 			80144e48 (onload_Mewtwo)
+ 			80144e48 (onload_Mewtwo)
 
-... 			80148ce4 (onload_YoungLink)
+ 			80148ce4 (onload_YoungLink)
 
-... 			801494e4 (onload_DrMario)
-... 			80149cc4 (onload_Falco)
-... 			80149e34 (onload_Pichu)
+ 			801494e4 (onload_DrMario)
+ 			80149cc4 (onload_Falco)
+ 			80149e34 (onload_Pichu)
 
-... 			8014a37c (onload_GameAndWatch)
+ 			8014a37c (onload_GameAndWatch)
 
-... 			8014ee1c (onload_Ganon)
+ 			8014ee1c (onload_Ganon)
 
-... 			8014f124 (onload_Roy)
-... 			8014f3dc (onload_BoyWireframe)
-... 			8014f440 (onload_GirlWireframe)
-... 			8014f6b8 (onload_GigaBowser)
-... 			8014f9d0 (onload_Sandbag)
-... 			8014fc6c (onload_MasterHand)
-... 			80155e1c (onload_CrazyHand)
+ 			8014f124 (onload_Roy)
+ 			8014f3dc (onload_BoyWireframe)
+ 			8014f440 (onload_GirlWireframe)
+ 			8014f6b8 (onload_GigaBowser)
+ 			8014f9d0 (onload_Sandbag)
+ 			8014fc6c (onload_MasterHand)
+ 			80155e1c (onload_CrazyHand)
 
 
 
-# Functions related to "InGame" scenes seem to live around here
+# Functions from the minor scene shared function tables are around here.
+# Functions related to "InGame" scenes? 
 			8016d32c
+# Functions related to "ResultScreen" scenes?
+			80177368
+# Classic/AllStar/Adventure Mode Splash screen scene functions?
+			80186dfc
+# Tournament mode scene functions?
+			8019628c
 # Functions related to "ResultScreen" scenes seem to live around here
 			80177368
 
-# Functions that live in the minor scene tables ("Prep," "Decide" functions)
-# are placed around here, starting with MainDebugMenu functions.
+
+# Functions from the minor scene tables start here, arranged in blocks related
+# to the associated major scene, starting with MainDebugMenu functions
 			801b099c
 
-# SceneFunction Camera mode functions start here?
-...			801b2d54
-# SceneFunction Classic Mode functions start here?
-...			801b2ba4
-# SceneFunction Adventure Mode functions start here?
-...			801b3f40
-# SceneFunction AllStar functions start here?
-...			801b5214
-# SceneFunction Targets functions start here?
-...			801b632c
-# SceneFunction blocks for various game modes start here?
-...			801b6ad8
+# ClassicMode scene functions?
+			801b2d54
+
+# <other scenes>
+			...
+
+# Miscellaneous scene functions
+			801bf728
+
 # First occurence of functions dealing with the static StaticInfo struct
-...			801bffb0
+			801bffb0
 
 # There's a block of stage StaticInfo setters and getters around here
-...			801c3880
+			801c3880
 
-# Stage-specific functions live around here?
-grizumi.o		801cbb84
-gr${stagename}.o	...
+# Stage-specific functions live around here, starting with Fountain:
+			801cbb84
+# Castle
+			801cd338
+# Pokemon Stadium
+			801d1018
+# Kongo Jungle
+			801d5238
 
-# Functions for target stages live around here?
-grtmario.o?		8021f840
-grt${charname}.o	...
+# <other stages>
+			...
 
-# Seems like the start of generic stage/camera functions.
-...			80224a54
+# Final Destination
+			8021a620
+
+# Target test stages (starting with Mario's)
+			8021f840
+
+# Ganon's target test (last in the chunk of target test functions)
+			802246d8
+
+# Start of generic stage/camera functions.
+			80224a54
+
+# Start of a block of functions relevant to the develop mode 
+			802254b8
+
+# Menu relevant functions here-ish
+			8022c304
+
+# SSS and CSS scene functions seem to be around here
+			80259ed8
+
+# High-level item/entity functions?
+			80267978
+
+# Start of regular item functions (from tables), starting with "Capsule," etc.
+			8027cf00
+
+# Character projectile item functions seem to start here, with Mario's
+			8029b868
+
+# Pokemon [projectile] functions, starting with Goldeen's.
+			802c8f4c
+
+# Seems like the start of functions relevant to CPU enemies/monsters
+			802d73f0
+
+# Start of another block of functions related to debug menu?
+			802ffea4
+
+# Adventure Mode cutscene functions from minor scene shared function tables
+			8031cd94
 
 # I believe the Metrowerks libraries start here. Think there are also some
 # others mixed in here. K7 map has a list of these. Probably very close to 

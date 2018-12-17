@@ -31,17 +31,20 @@ function tables and produce symbols. They currently expect that you move a
 `ram.raw` and `GALE01.map` into the directory, in case you want to run them
 on your own ram-dump and map.
 
-Many functions are re-used across/within different tables. The process of pruning 
-duplicate symbols is complicated and on-going. The re-use of functions across 
-different tables often encodes certain decisions about how the game was implemented,
-and sometimes these relationships are not obvious. The convention for symbol names is
-also up-in-the-air right now.
-
 The [`function_table_analysis.map`](py/analysis/function_table_analysis.map) 
 in this directory contains my copy of all script output which _should_ result 
-in a list of unique functions. As of right now, there are no guarantees that 
-this file is free of duplicates, so be careful if you decide to merge this 
-into your current symbol map.
+in a list of unique functions. This list *should* be free of duplicates,
+but it's always possible that I may have missed something, so keep that in
+mind if you're merging this with your map.
+
+Many functions are re-used across/within different tables. The process of pruning 
+duplicate symbols is complicated right now: especially considering that these 
+scripts are somewhat hacky at the moment. The re-use of functions across different 
+tables often encodes certain decisions about how the game was implemented, and 
+sometimes these relationships are not obvious, which makes naming the actual
+symbols kind of difficult. There are a lot of cases where, in the absence of
+a more "generic" name for some symbol, I've opted to simply rename symbols with
+the set of table indicies or ID values that they're used across. 
 
 
 ## Tools  
