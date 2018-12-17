@@ -46,6 +46,8 @@ def prefer_char(old_entry, new_entry):
         (charInternal.Falco.value , charInternal.Fox.value ),
         (charInternal.Nana.value , charInternal.Popo.value ),
         (charInternal.Pichu.value , charInternal.Pikachu.value ),
+        (charInternal.Luigi.value , charInternal.Mario.value ),
+        (charInternal.Samus.value , charInternal.Link.value ),
 
         # Interestingly, for these particular arrays, it looks like:
         #   - Young Link and Samus share some interrupt functions 
@@ -87,15 +89,17 @@ for char in (charInternal):
         while(True):
             ft = anim_ft(u32table(dump(array_ptr, 0x20)))
 
+            # Just disreguard entries where the anim_id is -1, for now. 
+            if (ft.idx == 0xffffffff):
+                array_ptr += 0x20
+                continue
+
             # Basically, the only reliable way I can see to determine an entry
             # is garbage is to see if the index field is out of bounds
             if (validptr(ft.data[0]) or (ft.idx > 0x200)):
                     break
 
-            # Just disreguard entries where the anim_id is -1, for now. 
-            if (ft.idx == 0xffffffff):
-                array_ptr += 0x20
-                continue
+
 
             # Construct an entry for each function, but don't do pruning
             # until after we've iterated over all possible tables. 

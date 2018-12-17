@@ -20,7 +20,7 @@ generating symbols used to annotate disassembly
 | [Notes on various data structures/function tables](docs/STRUCT.md)    |
 | [Notes on Melee's debug menu functionality](docs/DEBUG.md) |
 
-## Function Table Analysis (`7109` functions named so far)
+## Function Table Analysis (`7201` functions named so far)
 **Note:** If you'd like to see a copy of my whole symbol map, you can look
 at [`meta_GALE01.map`](meta_GALE01.map). Note that this map may not include
 the latest automatically-generated symbols from the analysis scripts.
