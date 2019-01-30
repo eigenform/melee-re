@@ -1,0 +1,56 @@
+#!/usr/bin/python3
+""" hpsparse - Read Melee's FST and find offsets of HPS files
+struct fst_entry
+{
+    u8 flags;       // 0x00=file, 0x01=directory
+    u8 name_off[3]; // offset into string table
+    u32 off;        // offset to file data
+    u32 len;        // length
+};
+"""
+
+from struct import pack, unpack
+
+# Expects a Game.toc in $PWD
+with open("Game.toc", "rb") as f:
+    data = f.read()
+
+ENTRIES = []
+UNIQUE = {}
+
+# These might be specific to NTSC v1.02
+CURSOR = 0x18
+STRING_BASE = 0x38d0
+NUM_ENTRIES = (unpack(">L", data[8:12])[0]) - 2
+
+# Loop over all file entries in the FST, pull out HPS files
+for idx in range(0, NUM_ENTRIES):
+    entry       = data[CURSOR:(CURSOR+0xc)]
+    name_off    = unpack(">L", b'\x00' + entry[1:4])[0]
+    off         = unpack(">L", entry[4:8])[0]
+    size        = unpack(">L", entry[8:12])[0]
+    name_sz     = 0
+
+    # Get the filename
+    while True:
+        b = data[(STRING_BASE + name_off):(STRING_BASE + name_off + name_sz)]
+        if (len(b) > 1):
+            if (b[-1] == 0):
+                break
+        name_sz += 1
+
+    name = data[(STRING_BASE + name_off):(STRING_BASE + name_off + name_sz - 1)]
+    name = name.decode('utf-8')
+
+    # If it's an HPS file, add it to our list
+    if (".hps" in name):
+        ENTRIES.append({'name': name, 'off': off, 'size': size})
+
+    # Go to the next entry
+    CURSOR      += 0xc
+
+for entry in ENTRIES:
+    print("offset={:08x} size={:08x}\tfilename={}".format(entry['off'], 
+        entry['size'], entry['name']))
+
+print("Found {} HPS files".format(len(ENTRIES)))
