@@ -28,7 +28,7 @@ The contents of this map come from:
 
 - [Various old maps](https://smashboards.com/threads/smashboards-community-symbol-map.426763/)
 - [UnclePunch's Training Mode map](https://github.com/UnclePunch/Training-Mode)
-- The output of analysis scripts found in this repository
+- The contents of [`function_table_analysis.map`](py/analysis/function_table_analysis.map) 
 - Functions I've named by-hand while investigating various things
 
 The `py/analysis/` directory contains scripts which are intended to be used
