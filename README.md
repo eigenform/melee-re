@@ -24,6 +24,12 @@ generating symbols used to annotate disassembly
 **Note:** If you'd like to see a copy of my whole symbol map, you can look
 at [`meta_GALE01.map`](meta_GALE01.map). Note that this map may not include
 the latest automatically-generated symbols from the analysis scripts.
+The contents of this map come from:
+
+- [Various old maps](https://smashboards.com/threads/smashboards-community-symbol-map.426763/)
+- [UnclePunch's Training Mode map](https://github.com/UnclePunch/Training-Mode)
+- The output of analysis scripts found in this repository
+- Functions I've named by-hand while investigating various things
 
 The `py/analysis/` directory contains scripts which are intended to be used
 with a Dolphin ram-dump and GALE01 symbol file. These scripts will walk various
