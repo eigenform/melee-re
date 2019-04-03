@@ -57,7 +57,7 @@ a character's special move-set. The entry lowest in memory is at
 `0x803d41f8` (Crazy Hand). There is some [yet unarticulated] mapping 
 from animation ID to action state which is different per-character.
 
-### Special B Moves
+### Per-character function tables
 `0x803c13e8` is the start of an array of many function pointer tables, each of
 0x84 bytes (indexed by internal character ID), where each word is a pointer
 to some character-specific action-state function (there are a lot of tables):
