@@ -58,9 +58,9 @@ a character's special move-set. The entry lowest in memory is at
 from animation ID to action state which is different per-character.
 
 ### Special B Moves
-`0x803c13e8` is the start of an array of 8 function pointer tables, each of
+`0x803c13e8` is the start of an array of many function pointer tables, each of
 0x84 bytes (indexed by internal character ID), where each word is a pointer
-to some action-state function for all special B moves.
+to some character-specific action-state function (there are a lot of tables):
 
 | Virtual Address | Function name |
 | ------------- | ------------- |
@@ -72,7 +72,20 @@ to some action-state function for all special B moves.
 | 0x803c167c    | `GroundNeutralB?` |
 | 0x803c1700    | `GroundDownB?` |
 | 0x803c1784    | `Unk2_BMove` |
-
+| 0x803c1808    | `onAbsorb` |
+| 0x803c188c    | `onItemPickup` |
+| 0x803c1910    | `onMakeItemInvisible` |
+| 0x803c1994    | `onMakeItemVisible` |
+| 0x803c1a18    | `onMakeItemDrop` |
+| 0x803c1a9c    | `onItemCatch` |
+| 0x803c1b20    | `onMakeItemDrop` (aerial?) |
+| 0x803c1ba4    | Unknown (only Pikachu has an entry?) |
+| 0x803c1c28    | Unknown (only Pikachu has an entry?) |
+| 0x803c1cac    | `onHit` |
+| 0x803c1d30    | `onUnk` |
+| 0x803c1db4    | Unknown (`perFrame`?) |
+| 0x803c1e38    | `chargeNeutralB` |
+| 0x803c1ebc    | `onRespawn` |
 
 ### Item Action Table
 `0x803c1808` is the base of 7 adjacent, 0x84-byte function pointer tables indexed
