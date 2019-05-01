@@ -165,20 +165,6 @@ Each of these pointers is a stage-specific function table. They are
 arranged according to the "internal stage ID." 
 
 
-
-
-There's also a pointer to a different table of function pointers, 
-but the table itself isn't always populated, and is missing for 
-the following stages:
-
-- Princess Peach's Castle
-- Kongo Jungle
-- Brinstar
-- Yoshi's Story
-- Pokemon Stadium
-- Mute City
-- Onett
-
 ```c
 // Ox14 bytes long
 struct stage_func_subtable
@@ -296,6 +282,79 @@ struct stage_func_table[0x70] = (struct stage_func_table*)0x803dfedc;
 | 0x803e6370 | Trophy2 |
 | 0x803e6420 | Trophy3 |
 
+
+The `stage_func_subtable` pointer in each of these structures points to some 
+variable-length array of subtables containing functions for stage entities:
+
+| Virtual Address | Number of entries | Stage Name             |
+| --------------- | ----------------- | ---------------------- |
+| 0x803e0d74      | 11	              | Fountain of Dreams |
+| 0x803e0ff4      | 21	              | Peach's Castle |
+| 0x803e126c      | 10	              | Pokemon Stadium |
+| 0x803e1704      | 12	              | Kongo Jungle |
+| 0x803e1a30      | 12	              | Brinstar |
+| 0x803e1d8c      | 19	              | Corneria |
+| 0x803e26f0      | 4	              | Yoshi's Story |
+| 0x803e27e0      | 6	              | Onett |
+| 0x803e29e0      | 41	              | Big Blue |
+| 0x803e30c4      | 39	              | Mute City |
+| 0x803e3cfc      | 7	              | Fourside |
+| 0x803e3e84      | 11	              | Great Bay |
+| 0x803e4718      | 11	              | Icicle Mountain |
+| 0x803e48f4      | 4	              | Unused |
+| 0x803e4ab4      | 16	              | Mushroom Kingdom II |
+| 0x803e4c9c      | 5	              | Brinstar Depths |
+| 0x803e4e34      | 7	              | Rainbow Cruise |
+| 0x803e50e8      | 3	              | Temple |
+| 0x803e5198      | 2	              | Yoshi's Island |
+| 0x803e5248      | 7	              | Jungle Japes |
+| 0x803e538c      | 16	              | Venom |
+| 0x803e5708      | 4	              | Adventure Mode: ?? |
+| 0x803e57f0      | 4	              | Adventure Mode: ?? |
+| 0x803e58f0      | 7	              | Adventure Mode: ?? |
+| 0x803e5db0      | 4	              | Adventure Mode: ?? |
+| 0x803e5e78      | 38	              | Adventure Mode: ?? |
+| 0x803e6278      | 3	              | Trophy 1 |
+| 0x803e6328      | 3	              | Trophy 2 |
+| 0x803e63d8      | 3	              | Trophy 3 |
+| 0x803e6488      | 6	              | Yoshi's Island 64 |
+| 0x803e658c      | 4	              | Kongo Jungle 64 |
+| 0x803e6688      | 9	              | Dreamland |
+| 0x803e6800      | 28	              | Pokefloats |
+| 0x803e7638      | 7	              | Green Greens |
+| 0x803e7940      | 9	              | Flatzone |
+| 0x803e7ac8      | 3	              | Race to the Finish |
+| 0x803e7d00      | 2	              | Snag Trophies |
+| 0x803e7da0      | 7	              | Battlefield |
+| 0x803e7ebc      | 10	              | Final Destination |
+| 0x803e8140      | 11	              | Home Run Contest |
+| 0x803e8454      | 5	              | All-star Rest area |
+| 0x803e8548      | 4	              | Target Test: Mario |
+| 0x803e8608      | 4	              | Target Test: Captain Falcon |
+| 0x803e86d0      | 4	              | Target Test: Young Link |
+| 0x803e8790      | 4	              | Target Test: Donkey Kong  |
+| 0x803e8850      | 4	              | Target Test: Dr. Mario |
+| 0x803e8918      | 4	              | Target Test: Falco |
+| 0x803e89d8      | 4	              | Target Test: Fox |
+| 0x803e8a98      | 4	              | Target Test: ICs |
+| 0x803e8bb0      | 4	              | Target Test: Kirby |
+| 0x803e8c70      | 4	              | Target Test: Bowser |
+| 0x803e8d30      | 4	              | Target Test: Link |
+| 0x803e8df0      | 4	              | Target Test: Luigi |
+| 0x803e8eb0      | 4	              | Target Test: Marth |
+| 0x803e8f70      | 4	              | Target Test: Mewtwo |
+| 0x803e9030      | 4	              | Target Test: Ness |
+| 0x803e90f0      | 4	              | Target Test: Peach |
+| 0x803e91b0      | 4	              | Target Test: Pichu |
+| 0x803e9270      | 4	              | Target Test: Pikachu |
+| 0x803e9338      | 4	              | Target Test: Jigglypuff |
+| 0x803e93f8      | 4	              | Target Test: Samus |
+| 0x803e94b8      | 4	              | Target Test: Sheik |
+| 0x803e9578      | 4	              | Target Test: Yoshi |
+| 0x803e9638      | 4	              | Target Test: Zelda |
+| 0x803e96f8      | 4	              | Target Test: Game n' Watch |
+| 0x803e97c0      | 4	              | Target Test: Roy |
+| 0x803e9880      | 4	              | Target Test: Ganon |
 
 -----------------------------------------------------------------------------
 
