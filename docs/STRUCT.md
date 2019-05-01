@@ -1,4 +1,4 @@
-# Global Structures
+# Animations/Action State/Player State
 
 ## Generic Animation/Action-State function tables
 `0x803c2800` is the base of an array of function pointer tables that seem to 
@@ -40,7 +40,6 @@ struct anim_ft
 struct anim_ft global_as_ft[341] = (struct anim_ft*)0x803c2800;
 ```
 
--------------------------------------------------------------------------------
 
 ## Character-specific Animation/Action State function tables
 `struct anim_ft` (in the section above) is also used to hold animation 
@@ -156,13 +155,19 @@ Tables to functions indexed by internal character ID. Not well understood.
 | 0x803c1ebc    | `onRespawn`|
 | 0x803c21d4    | `unkJump2`, only entries for Puff and Kirby?|
 
+## Subaction Events
+
+A table at `0x803c06e8` is filled with 98 function pointers to subaction event functions.
+
+
 -------------------------------------------------------------------------------
 
-## Table of pointers to Stage-specific Function Tables
+# Stages
+
+## Stage-specific Function Tables
 There's a table of pointers, `0x1bc` bytes long, starting at `0x803dfedc`.
 Each of these pointers is a stage-specific function table. They are
 arranged according to the "internal stage ID." 
-
 
 ```c
 // Ox14 bytes long
@@ -210,6 +215,7 @@ struct stage_func_table
 
 struct stage_func_table[0x70] = (struct stage_func_table*)0x803dfedc;
 ```
+
 
 | Virtual Address | Stage Name |
 | --------------- | ---------- |
@@ -281,6 +287,7 @@ struct stage_func_table[0x70] = (struct stage_func_table*)0x803dfedc;
 | 0x803e6370 | Trophy2 |
 | 0x803e6420 | Trophy3 |
 
+## Stage entity function tables
 
 The `stage_func_subtable` pointer in each of these structures points to some 
 variable-length array of subtables containing functions for stage entities:
@@ -355,7 +362,24 @@ variable-length array of subtables containing functions for stage entities:
 | 0x803e97c0      | 4	              | Target Test: Roy |
 | 0x803e9880      | 4	              | Target Test: Ganon |
 
+
+## Event Match Functions
+
+```c
+struct eventmatch_ft
+{
+	unk_t (*unk_func)(...);
+	unk_t (*think)(...);
+};
+```
+
+Some unknown table of 51 pointer entries to some `struct eventmatch_ft` starts at `0x803df94c`.
+The actual structures are stored contiguously in an array of `struct eventmatch_ft` at `0x0804d4330`.
+It's not clear how the table and pointer table are indexed.
+
 -----------------------------------------------------------------------------
+
+# Items
 
 ## Item-related function tables
 Depending on the item ID, various related function tables are stored
@@ -394,7 +418,7 @@ struct item_ft
 
 -------------------------------------------------------------------------------
 
-## Scene function tables
+# Scenes
 
 Melee is organized into certain "major scenes," each of which contain associated
 "minor scenes." Major scenes all have unique IDs, and minor scenes have IDs
@@ -402,6 +426,7 @@ which are only unique within some associated major scene. All minor scenes
 also have a different ID, called the "class ID," which refers
 to some generic class of scene.
 
+## Scene function tables
 The array of major scene function tables begins at `0x803dacb8`, indexed by
 the major scene ID.
 
@@ -464,9 +489,9 @@ struct min_scene_class_ft
 };
 ```
 
--------------------------------------------------------------------------------
-
 ## Scene structures and state
+
+Some global "scene controller state" of `struct scene_state` lives at `0x80479d30`.
 
 ```c
 struct scene_state
@@ -488,11 +513,12 @@ struct scene_state
 };
 ```
 
-Some "scene controller state" of `struct scene_state` lives at `0x80479d30`.
 
 -------------------------------------------------------------------------------
 
-## Camera Functions
+# Camera
+
+## Camera Function Tables
 
 ```c
 struct camera_ft
@@ -521,7 +547,9 @@ Additionally, there's also a table of camera mode functions at `0x803bcb18`:
 
 -------------------------------------------------------------------------------
 
-## Menu Functions
+# Menu
+
+## Menu Structures
 
 ```c
 struct menu_ft
@@ -535,38 +563,20 @@ struct menu_ft
 };
 ```
 
-An array of 34 `menu_ft` structures representing menu functions starts at `0x803eb6b0`.
+An array of 34 `menu_ft` structures representing particular menus/sub-menus starts at `0x803eb6b0`.
 
 -------------------------------------------------------------------------------
 
-## Subaction Events
+# Audio/Music/SFX
 
-A table at `0x803c06e8` is filled with 98 function pointers to subaction event functions.
-
--------------------------------------------------------------------------------
-
-## Audio/Sound
-
+## Function Tables
 Some unknown function table with 10 entries at `0x803bca24`.
 These are most likely related to audio/SFX.
 
--------------------------------------------------------------------------------
-
-## Event Match Functions
-
-```c
-struct eventmatch_ft
-{
-	unk_t (*unk_func)(...);
-	unk_t (*think)(...);
-};
-```
-
-Some unknown table of 51 pointer entries to some `struct eventmatch_ft` starts at `0x803df94c`.
-The actual structures are stored contiguously in an array of `struct eventmatch_ft` at `0x0804d4330`.
-It's not clear how the table and pointer table are indexed.
 
 -------------------------------------------------------------------------------
+
+# Memory Management
 
 ## Heap Data
 
@@ -586,6 +596,7 @@ struct heap_object
 
 This may be only _one particular_ kind of region for dynamic allocations.
 
+## Persistent Heap Allocations
 
 ```c
 struct persistent_heap_obj
