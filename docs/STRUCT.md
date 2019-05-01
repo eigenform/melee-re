@@ -1,6 +1,5 @@
 # Global Structures
 
-
 ## Generic Animation/Action-State function tables
 `0x803c2800` is the base of an array of function pointer tables that seem to 
 hold either animation-specific or action-state-specific functions. These are 
@@ -467,6 +466,81 @@ struct min_scene_class_ft
 };
 ```
 
+-------------------------------------------------------------------------------
+
+## Camera Functions
+
+```c
+struct camera_ft
+{
+	u32 unk;
+	unk_t (*unk_func)(...);
+	unk_t (*think)(...);
+};
+```
+
+There's some unknown table of these 9 `camera_ft` structures at `0x803da6b4`.
+They seem to hold camera-related functions.
+
+Additionally, there's also a table of camera mode functions at `0x803bcb18`:
+
+| Virtual Address | Camera Mode Function |
+| --------------- | -------------------- |
+| 0x8002b3d4      | CameraType_Normal |
+| 0x8002cddc      | CameraType_Pause |
+| 0x8002d318      | Unknown? |
+| 0x8002d85c      | Unknown? |
+| 0x8002ddc4      | CameraType_FixedCamera |
+| 0x8002c908      | CameraMode_CameraThink |
+| 0x8002e490      | Unknown? |
+
+
+-------------------------------------------------------------------------------
+
+## Menu Functions
+
+```c
+struct menu_ft
+{
+	void *unk_float_ptr;
+	f32 unk_float;
+	void *text_id_ptr;
+	s8 num_options;
+	u8 padding[3];
+	unk_t (*think)(...);
+};
+```
+
+An array of 34 `menu_ft` structures representing menu functions starts at `0x803eb6b0`.
+
+-------------------------------------------------------------------------------
+
+## Subaction Events
+
+A table at `0x803c06e8` is filled with 98 function pointers to subaction event functions.
+
+-------------------------------------------------------------------------------
+
+## Audio/Sound
+
+Some unknown function table with 10 entries at `0x803bca24`.
+These are most likely related to audio/SFX.
+
+-------------------------------------------------------------------------------
+
+## Event Match Functions
+
+```c
+struct eventmatch_ft
+{
+	unk_t (*unk_func)(...);
+	unk_t (*think)(...);
+};
+```
+
+Some unknown table of 51 pointer entries to some `struct eventmatch_ft` starts at `0x803df94c`.
+The actual structures are stored contiguously in an array of `struct eventmatch_ft` at `0x0804d4330`.
+It's not clear how the table and pointer table are indexed.
 
 -------------------------------------------------------------------------------
 
