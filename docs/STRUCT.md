@@ -185,7 +185,7 @@ struct stage_func_table
 
 /* For many stages, some of these are pointers to functions that simply
  * return zero or non-zero. If I had to guess: it probably depends on how 
- * complicated some stage geometry is, or something.
+ * complicated some stage geometry is, or something. */
 
 	unk_t (*StageInit)(...);
 	unk_t (*unk_1)(...);
@@ -448,23 +448,47 @@ struct min_scene_ft
 
 The `class_id` for some minor scene is an index into an array of "minor scene 
 class function tables" which hold generic functions shared among all minor 
-scenes of that particular class. This array starts at `0x803da920`.
+scenes of that particular class. This array (45 entires) starts at `0x803da920`.
 
 ```c
 struct min_scene_class_ft
 {
 	u8 class_id;
-	u8 unk_0;
-	u8 unk_1;
-	u8 unk_2;
+	u16 unk;
+	u8 unk;
 
-	unk_t (*Think)(...);
-	unk_t (*Load)(...);
-	unk_t (*Leave)(...);
-
-	u32 unk_3;
+	unk_t (*OnFrame)(...);
+	unk_t (*OnLoad)(...);
+	unk_t (*OnLeave)(...);
+	unk_t (*unk_func)(...);
 };
 ```
+
+-------------------------------------------------------------------------------
+
+## Scene structures and state
+
+```c
+struct scene_state
+{
+	u8 current_major;
+	u8 pending_major;
+	u8 previous_major;
+	u8 current_minor;
+
+	u8 previous_minor;
+	u8 pending_minor;
+	u32 unk_06;
+	u16 unk_0a;
+
+	u8 pending;
+	u8 pad[3];
+
+	unk_t (*MajorSceneExitCallback)(...);
+};
+```
+
+Some "scene controller state" of `struct scene_state` lives at `0x80479d30`.
 
 -------------------------------------------------------------------------------
 
@@ -561,4 +585,24 @@ struct heap_object
 ```
 
 This may be only _one particular_ kind of region for dynamic allocations.
-I don't know which one it is, yet.
+
+
+```c
+struct persistent_heap_obj
+{
+	u8 preload_status;
+	u8 heap_id;
+	u8 unk_02;
+	u8 unk_03;
+	u16 unk_04;
+	u16 file_entrynum;
+	u16 unk_08;
+	u16 unk_0a;
+	u32 file_len;
+	void *persistent_heap_allocation_ptr;
+	void *file_data_ptr;
+	u32 persistent_file_id;
+};
+```
+
+Some array of `struct persistent_heap_obj` (80 entries) lives at `0x80432124`.
