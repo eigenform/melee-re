@@ -57,21 +57,60 @@ a character's special move-set. The entry lowest in memory is at
 `0x803d41f8` (Crazy Hand). There is some [yet unarticulated] mapping 
 from animation ID to action state which is different per-character.
 
+| Virtual Address | Internal ID | Character Name  | Number of entries |
+| --------------- | ----------- | --------------- | ----------------- |
+| 0x803c7120      | 0           | Mario           | 12                |
+| 0x803c72b8      | 1           | Captain Falcon  | 23                |
+| 0x803c7788      | 2           | Fox             | 35                |
+| 0x803c71e8      | 3           | Link            | 31                |
+| 0x803c8368      | 4           | Kirby           | 203               |
+| 0x803cb838      | 5           | Donkey Kong     | 46                |
+| 0x803cc060      | 6           | Shiek           | 24                |
+| 0x803cc650      | 7           | Ness            | 36                |
+| 0x803cccb8      | 8           | Peach           | 30                |
+| 0x803cd2d0      | 9           | Popo            | 26                |
+| 0x803cd838      | 10          | Nana            | 26                |
+| 0x803cdd78      | 11          | Pikachu         | 26                |
+| 0x803ce2d0      | 12          | Samus           | 18                |
+| 0x803ce6d0      | 13          | Yoshi           | 28                |
+| 0x803cedc0      | 14          | Bowser          | 23                |
+| 0x803cf420      | 15          | Marth           | 32                |
+| 0x803cfa58      | 16          | Zelda           | 18                |
+| 0x803cfef0      | 17          | Jigglypuff      | 32                |
+| 0x803e0628      | 18          | Luigi           | 20                |
+| 0x803e0b00      | 19          | Mewtwo          | 20                |
+| 0x803e0fa0      | 20          | Young Link      | 21                |
+| 0x803e1498      | 21          | Dr. Mario       | 10                |
+| 0x803e1848      | 22          | Falco           | 35                |
+| 0x803e1ea8      | 23          | Pichu           | 26                |
+| 0x803e23e8      | 24          | Game n' Watch   | 40                |
+| 0x803e29f8      | 25          | Ganon           | 23                |
+| 0x803e2e80      | 26          | Roy             | 32                |
+| 0x803e35e8      | 27          | Giga Bowser     | 23                |
+| 0x803e3998      | 28          | Sandbag         | 1                 |
+| 0x803e3a30      | 29          | Master Hand     | 50                |
+| 0x803e41f8      | 30          | Crazy Hand      | 49                |
+
+
 ### Per-character function tables
-`0x803c13e8` is the start of an array of many function pointer tables, each of
+This region in memory has a lot of function pointer tables, each of
 0x84 bytes (indexed by internal character ID), where each word is a pointer
-to some character-specific action-state function (there are a lot of tables):
+to some character-specific action-state function:
 
 | Virtual Address | Function name |
 | ------------- | ------------- |
-| 0x803c13e8    | `GroundSideB?` |
-| 0x803c146c    | `UpB?` |
-| 0x803c14f0    | `AerialDownB?` |
-| 0x803c1574    | `Unk1_BMove` |
-| 0x803c15f8    | `AerialNeutralB?` |
-| 0x803c167c    | `GroundNeutralB?` |
-| 0x803c1700    | `GroundDownB?` |
-| 0x803c1784    | `Unk2_BMove` |
+| 0x803c1154    | `onLoad` |
+| 0x803c11d8    | `playerblockOnDeath` |
+| 0x803c125c    | Unknown - only an entry for Jigglypuff? |
+| 0x803c12e0    | Table of pointers to anim_ft tables |
+| 0x803c13e8    | `GroundSideB` |
+| 0x803c146c    | `AerialUpB` |
+| 0x803c14f0    | `AerialDownB` |
+| 0x803c1574    | `AerialSideB` |
+| 0x803c15f8    | `AerialNeutralB` |
+| 0x803c167c    | `GroundNeutralB` |
+| 0x803c1700    | `GroundDownB` |
+| 0x803c1784    | `GroundUpB` |
 | 0x803c1808    | `onAbsorb` |
 | 0x803c188c    | `onItemPickup` |
 | 0x803c1910    | `onMakeItemInvisible` |
@@ -86,6 +125,8 @@ to some character-specific action-state function (there are a lot of tables):
 | 0x803c1db4    | Unknown (`perFrame`?) |
 | 0x803c1e38    | `chargeNeutralB` |
 | 0x803c1ebc    | `onRespawn` |
+
+Kirby's table for transformations lives at `0x803c9cc8`.
 
 ### Item Action Table
 `0x803c1808` is the base of 7 adjacent, 0x84-byte function pointer tables indexed
@@ -122,6 +163,9 @@ Tables to functions indexed by internal character ID. Not well understood.
 There's a table of pointers, `0x1bc` bytes long, starting at `0x803dfedc`.
 Each of these pointers is a stage-specific function table. They are
 arranged according to the "internal stage ID." 
+
+
+
 
 There's also a pointer to a different table of function pointers, 
 but the table itself isn't always populated, and is missing for 
@@ -182,6 +226,77 @@ struct stage_func_table
 struct stage_func_table[0x70] = (struct stage_func_table*)0x803dfedc;
 ```
 
+| Virtual Address | Stage Name |
+| --------------- | ---------- |
+| 0x803e5764 | Test |
+| 0x803e11a4 | Castle |
+| 0x803e4ecc | Rainbow Cruise |
+| 0x803e1800 | Kongo Jungle |
+| 0x803e52e0 | Jungle Japes |
+| 0x803e3f6c | Great Bay |
+| 0x803e5130 | Temple |
+| 0x803e1b2c | Brinstar |
+| 0x803e4d0c | Brinstar Depths |
+| 0x803e274c | Yoshi's Story |
+| 0x803e51cc | Yoshi's Island |
+| 0x803e0e5c | Fountain of Dreams |
+| 0x803e76d0 | Green Greens |
+| 0x803e1f08 | Corneria |
+| 0x803e54cc | Venom |
+| 0x803e1334 | Pokemon Stadium |
+| 0x803e6a3c | Pokefloats |
+| 0x803e33dc | Mute City |
+| 0x803e2d20 | Big Blue |
+| 0x803e2858 | Onett |
+| 0x803e3d94 | Fourside |
+| 0x803e4800 | Icicle Mountain |
+| 0x803e4950 | Unused? |
+| 0x803e4c00 | Mushroom Kingdom II |
+| 0x803e7a00 | Flatzone |
+| 0x803e6748 | Dreamland |
+| 0x803e650c | Yoshi's Island 64 |
+| 0x803e65e8 | Kongo Jungle 64 |
+| 0x803e584c | Adventure Mode: Mushroom Kingdom? |
+| 0x803e5988 | Adventure Mode: Hyrule? |
+| 0x803e5e0c | Adventure Mode: Brinstar? |
+| 0x803e617c | Adventure Mode: Unknown? |
+| 0x803e7e38 | Battlefield |
+| 0x803e7f90 | Final Destination |
+| 0x803e7d34 | Snag Trophies |
+| 0x803e7b10 | Race to the Finish |
+| 0x803e85a4 | Target Test: Mario |
+| 0x803e8664 | Target Test: Captain Falcon |
+| 0x803e872c | Target Test: Young Link |
+| 0x803e87ec | Target Test: Donkey Kong |
+| 0x803e88ac | Target Test: Dr. Mario |
+| 0x803e8974 | Target Test: Falco |
+| 0x803e8a34 | Target Test: Fox |
+| 0x803e8af4 | Target Test: ICs |
+| 0x803e8c0c | Target Test: Kirby |
+| 0x803e8ccc | Target Test: Bowser |
+| 0x803e8d8c | Target Test: Link |
+| 0x803e8e4c | Target Test: Luigi |
+| 0x803e8f0c | Target Test: Marth |
+| 0x803e8fcc | Target Test: Mewtwo |
+| 0x803e908c | Target Test: Ness |
+| 0x803e914c | Target Test: Peach |
+| 0x803e920c | Target Test: Pichu |
+| 0x803e92cc | Target Test: Pikachu |
+| 0x803e9394 | Target Test: Jigglypuff |
+| 0x803e9454 | Target Test: Samus |
+| 0x803e9514 | Target Test: Shiek |
+| 0x803e95d4 | Target Test: Yoshi |
+| 0x803e9694 | Target Test: Zelda |
+| 0x803e9754 | Target Test: Game n' Watch |
+| 0x803e981c | Target Test: Roy |
+| 0x803e98dc | Target Test: Ganon |
+| 0x803e84c4 | All-star Rest stage |
+| 0x803e821c | Home Run Contest |
+| 0x803e62c0 | Trophy1 |
+| 0x803e6370 | Trophy2 |
+| 0x803e6420 | Trophy3 |
+
+
 -----------------------------------------------------------------------------
 
 ## Item-related function tables
@@ -189,12 +304,12 @@ Depending on the item ID, various related function tables are stored
 in different arrays. Each of the following are arrays of `struct item_ft`.
 The mapping appears to be:
 
-| Item class | Item ID range | Virtual address |
-| ------------- | ------------- | -------------- |
-| Regular items | 0x000 - 0x02a | 0x803f14c4 |
-| Character projectiles, monsters | 0x02b - 0x0a0 | 0x803f3100 |
-| Pokemon | 0x0a1 - 0x0cf | 0x803f23cc |
-| Stage-specific items | ??? | 0x803f4d20 |
+| Virtual Address | Item class/description    | Item ID range |
+| ------------- | --------------------------- | ------------- |
+| 0x803f14c4    | Regular items               | 0x000 - 0x02a |
+| 0x803f3100    | Projectiles, monsters       | 0x02b - 0x0a0 | 
+| 0x803f23cc    | Pokemon                     | 0x0a1 - 0x0cf | 
+| 0x803f4d20    | Stage-specific items        | Unknown?      | 
 
 
 ```c
