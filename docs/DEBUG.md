@@ -11,8 +11,8 @@
 
 | When/Where/How | Inputs  | Description |
 | ---------- | ------- | ----------- |
-| On Boot, if `debug.ini` is present  | Hold **Y** | Elevate debug level |
-| On Boot, if `debug.ini` is present  | Hold **R** | Invoke EXI2USB setup |
+| On Boot, if `develop.ini` is present  | Hold **Y** | Elevate debug level |
+| On Boot, if `develop.ini` is present  | Hold **R** | Invoke EXI2USB setup |
 | Main Menu, if debug level is 3 | Press **Y** | Invoke the debug menu |
 | Main Menu, if debug level is 3 | Press **X** | Invoke the sound-test menu |
 | Anywhere, if debug level is 3  | **X + Pad-Up** for pause, **Z** for frame-advance | Pause all animation, frame-advance |
@@ -24,7 +24,7 @@
 ## Additional Notes
 
 - At boot-time, the function at `0x8015fda4` calls `DVDConvertPathToEntrynum` in an attempt
-  to find a `debug.ini` on-disc (typically, only `usa.ini` is on-disc). If present, the 
+  to find a `develop.ini` on-disc (typically, only `usa.ini` is on-disc). If present, the 
   user can hold 'Y' during boot to elevate into debug mode. I think holding 'X' will
   move the level downwards.
 
