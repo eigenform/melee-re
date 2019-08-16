@@ -6,6 +6,10 @@
 
 __start:
 	backup
+	load_rt r4, f1Backup
+	stfs f1, 0(r4)
+	load_rt r4, f2Backup
+	stfs f2, 0(r4)
 
 	# If varAllocated is zero, we haven't allocated objects yet
 	load_rt r4, varAllocated
@@ -34,7 +38,7 @@ __allocateMemory:
 	li r4, 0x10
 	li r5, 0x10
 	li r6, 32
-	li r7, 2
+	li r7, 5
 	load_rt r8, stringPtr
 	lwz r8, 0(r8)
 	branchl r11, TextData_Create
@@ -95,28 +99,32 @@ checkDrawing:
 	
 # If drawing is enabled, we're free to mutate our text objects
 __drawText:
-	#load r3, 0x804a1fd8
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	branchl r11, DevelopMode_Text_Erase
 
-	#load r3, 0x804a1fd8
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	li r4, 0
 	li r5, 0
 	branchl r11, DevelopMode_Text_ResetCursor
 
-	#load r3, 0x804a1fd8
+	load r3, 0x81118dec # p1 x
+	lfs f1, 0(r3)
+
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, fmtstring1
+	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
 	branchl r11, DevelopMode_Text_Display
 
-	#load r3, 0x804a1fd8
+	load r4, 0x81118df0 # p1 y
+	lfs f1, 0(r4)
+
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, fmtstring2
+	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
 	branchl r11, DevelopMode_Text_Display
 
 	b __exit
@@ -139,15 +147,24 @@ backgroundColor:
 	blrl
 	.word 0x00000000
 	.align 4
+f1Backup:
+	blrl
+	.quad 0x00000000
+	.align 4
+f2Backup:
+	blrl
+	.quad 0x00000000
+	.align 4
+
 
 # Local storage - format strings for rendering text
 fmtstring1:
 	blrl
-	.string "Hello, world!\n"
+	.string "x %f\n"
 	.align 4
 fmtstring2:
 	blrl
-	.string "This is a test!\n"
+	.string "y %f\n"
 	.align 4
 
 # Re-enable develop mode text drawing, then fall-though to the end
@@ -155,4 +172,10 @@ fmtstring2:
 #	stw r4, 0x0(r3)
 
 __exit:
+	load_rt r4, f1Backup
+	lfs f1, 0(r4)
+	load_rt r4, f2Backup
+	lfs f2, 0(r4)
+
+
 	restore
