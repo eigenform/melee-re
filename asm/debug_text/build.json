@@ -1,0 +1,18 @@
+{
+  "settings": { "areIncludesRelativeFromFile": true },
+    "outputFiles": [ { "file": "codes.txt" } ],
+  "codes": [
+    {
+      "name": "Debug Text",
+      "authors": [ "meta" ],
+      "description": [ "Overlay arbitrary debug text on the screen." ],
+      "build": [
+        {
+          "type": "inject",
+	  "address": "801a4d98", 
+          "sourceFile": "main.asm"
+        }
+      ]
+    }
+  ]
+}
