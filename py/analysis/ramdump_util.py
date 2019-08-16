@@ -81,6 +81,7 @@ def getsymbolsize(addr):
     for symbol in symbols:
         if (addr == symbol[0]):
             return symbol[1]
+    return None
 
 
 # -----------------------------------------------------------------------------
@@ -90,6 +91,7 @@ def getsymbolsize(addr):
 with open("ram.raw", "rb") as f:
     ram = f.read()
 
+symbolmap = {}
 with open("GALE01.map", "r") as f:
     symbols = []
     for line in f:
@@ -99,5 +101,5 @@ with open("GALE01.map", "r") as f:
         if ((entry[0] == '') or (entry[0] == '.text') or (entry[0] == '.data')):
             continue
         symbol = [int(entry[0], 16), int(entry[1], 16), entry[4]]
+        symbolmap[int(entry[0], 16)] = {'size' : int(entry[1], 16), 'name': entry[4]}
         symbols.append(symbol)
-

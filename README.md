@@ -19,6 +19,7 @@ generating symbols used to annotate disassembly
 | [Notes on the DOL/memory layout](docs/LINKERMAP.md)   |
 | [Notes on various data structures/function tables](docs/STRUCT.md)    |
 | [Notes on Melee's debug menu functionality](docs/DEBUG.md) |
+| [Notes on Melee's input polling](docs/INPUTS.md) |
 
 ## Function Table Analysis (`7201` functions named so far)
 **Note:** If you'd like to see a copy of my whole symbol map, you can look
@@ -52,7 +53,6 @@ symbols kind of difficult. There are a lot of cases where, in the absence of
 a more "generic" name for some symbol, I've opted to simply rename symbols with
 the set of table indicies or ID values that they're used across. 
 
-
 ## Tools  
 The `py/` directory contains all of the scripts I've collected for doing some
 analysis on Melee (specifically, on the executable, or on Dolphin RAM dumps).
@@ -73,3 +73,9 @@ py/
 └── melee-stack-dump			# Unwind call chains from a ram dump of the stack region
 ```
 
+
+## Patches
+The `asm/` directory is basically just a binder for various patches that I've 
+written. Note that, in order to compile particular patches into sets of
+Gecko codes, you will probably need to install devkitPPC (or obtain some
+copy of an assembler targeting GC/Wii) and [JLaferri/gecko](https://github.com/JLaferri/gecko).
