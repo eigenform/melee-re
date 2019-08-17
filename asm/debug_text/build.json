@@ -3,13 +3,13 @@
     "outputFiles": [ { "file": "codes.txt" } ],
   "codes": [
     {
-      "name": "Debug Text",
+      "name": "CSS Cursor Debug Text (1.00)",
       "authors": [ "meta" ],
       "description": [ "Overlay arbitrary debug text on the screen." ],
       "build": [
         {
           "type": "inject",
-	  "address": "801a4d98", 
+	  "address": "801a4050", 
           "sourceFile": "main.asm"
         }
       ]

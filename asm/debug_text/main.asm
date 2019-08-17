@@ -20,20 +20,19 @@ __start:
 	bne checkDrawing
 
 __allocateMemory:
-	# This is literally just the allocation from Develop Mode bonuses,
-	# and this corresponds to the arguments to drawing functions.
-	#branchl r11, 0x80228cf4
 
 	# Allocate some memory for the string to display and save the pointer.
 	# Must be at least `TextData->max_rows * TextData->max_width * 2`
 	# (this how `DevelopMode_Text_Erase()` calculates string size?)
+
 	li r3, 0x500
 	branchl r11, _HSD_MemAlloc
 	load_rt r4, stringPtr
 	stw r3, 0x0(r4)
 
-	# Instantiate a new TextData object, then save the pointer to it
+	# Instantiate a new TextData object, then save the pointer to it.
 	# r3=id?, r4=x_off, r5=y_off, r6=max_width, r7=max_row, r8=string ptr
+
 	li r3, 1	
 	li r4, 0x10
 	li r5, 0x10
@@ -45,7 +44,8 @@ __allocateMemory:
 	load_rt r4, textObjPtr
 	stw r3, 0(r4)
 
-	# Pass textObjPtr to this function to enable it?
+	# This function enables the GXLink-scheduled function to display
+	# our text object (I think ...)
 	mr r4, r3
 	branchl r11, TextData_Init
 
@@ -69,58 +69,69 @@ __allocateMemory:
 # First, we need to check to see if drawing has been disabled. If disabled 
 # (i.e. after a scene transition), just re-enable it by writing the pointer.
 checkDrawing:
-	# r3 typically holds a pointer main develop text object
-	#load r3, 0x804d6e18
-
-	# r4 is typically the address of the main object
-	#load r4, 0x804a1fd8
-
-	# If the pointer is zero, it means drawing is disabled, so re-enable 
-	# it and just exit this function for now
-	#lwz r5, 0x0(r3)
-	#cmpwi r5, 0
-	#beq __enableDrawing
 
 	# If this pointer is non-null, it's probably the pointer to our
 	# object, so we can continue updating our objects
-	load r3, 0x804d6e18
+
+	load r3, GLOBAL_TEXTDATA_PTR
 	lwz r3, 0(r3)
 	cmpwi r3, 0
 	bne __drawText
 
 	# Otherwise, if the pointer was null, re-initialize our object
-	# and exit
+	# and branch to the exit
+
 	load_rt r4, textObjPtr
 	lwz r4, 0(r4)
 	branchl r11, TextData_Init
 	b __exit
 
-
-	
 # If drawing is enabled, we're free to mutate our text objects
 __drawText:
+
+	# Clear out the string data
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	branchl r11, DevelopMode_Text_Erase
 
+	# Reset the cursor position
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	li r4, 0
 	li r5, 0
 	branchl r11, DevelopMode_Text_ResetCursor
 
-	load r3, 0x81118dec # p1 x
-	lfs f1, 0(r3)
 
+	# Resolve a pointer to the P1 cursor struct.
+	# If the pointer is null, just do nothing until we're in the CSS.
+	# Otherwise, load the floats and use them to render text.
+	# The cursor structure members we care about are:
+	#	0x0c - f32 x_pos
+	#	0x10 - f32 y_pos
+
+	load r3, GLOBAL_P1CURSOR_PTR
+	lwz r3, 0(r3)
+	cmpwi r3, 0
+	beq __exit
+
+	# Load cursor x position
+	lfs f1, 0x0c(r3)
+	lwz r5, 0x0c(r3)
+
+	# Update text
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, fmtstring1
-	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
+	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq # necessary to render floating-point
 	branchl r11, DevelopMode_Text_Display
 
-	load r4, 0x81118df0 # p1 y
-	lfs f1, 0(r4)
+	# Load cursor y position
+	load r3, GLOBAL_P1CURSOR_PTR
+	lwz r3, 0(r3)
+	lfs f1, 0x10(r3)
+	lwz r5, 0x10(r3)
 
+	# Update text
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, fmtstring2
@@ -128,7 +139,6 @@ __drawText:
 	branchl r11, DevelopMode_Text_Display
 
 	b __exit
-
 
 # Local storage - stuff we allocate for our objects
 varAllocated:
@@ -160,11 +170,11 @@ f2Backup:
 # Local storage - format strings for rendering text
 fmtstring1:
 	blrl
-	.string "x %f\n"
+	.string "X: (%08x) %f\n"
 	.align 4
 fmtstring2:
 	blrl
-	.string "y %f\n"
+	.string "Y: (%08x) %f\n"
 	.align 4
 
 # Re-enable develop mode text drawing, then fall-though to the end
