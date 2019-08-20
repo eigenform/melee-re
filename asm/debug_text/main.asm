@@ -49,16 +49,25 @@ __allocateMemory:
 	mr r4, r3
 	branchl r11, TextData_Init
 
+	# Unhide the object
+	load_rt r4, textObjPtr
+	lwz r3, 0(r4)
+	branchl r11, TextData_Unhide
+
 	# Set background color
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, backgroundColor
 	branchl r11, TextData_SetBackgroundColor
 
-	# Unhide the object
+	# Set size
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
-	branchl r11, TextData_Unhide
+	load_rt r4, textWidth
+	lfs f1, 0(r4)
+	load_rt r4, textHeight
+	lfs f2, 0(r4)
+	branchl r11, TextData_SetWidthHeight
 
 	# Set varAllocated to non-zero and exit
 	li r3, 1
@@ -138,9 +147,38 @@ __drawText:
 	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
 	branchl r11, DevelopMode_Text_Display
 
+	load_rt r4, currentFrame
+	lwz r3, 0(r4)
+	cmpwi r3, 2
+
+	addi r3, r3, 1
+	stw r3, 0(r4)
+
+	bne __exit
+
+
+	# Load x and y video beam pos and update Text
+	load_rt r4, textObjPtr
+	lwz r3, 0(r4)
+	load_rt r4, fmtstring3
+
+	# x/y video beam pos
+	load r7, 0xcc002000
+	lhz r5, 0x2e(r7)
+	lhz r6, 0x2c(r7)
+	branchl r11, DevelopMode_Text_Display
+
+	load_rt r4, currentFrame
+	li r3, 0
+	stw r3, 0(r4)
+
 	b __exit
 
 # Local storage - stuff we allocate for our objects
+currentFrame:
+	blrl
+	.word 0x00000000
+	.align 4
 varAllocated:
 	blrl
 	.word 0x00000000
@@ -155,8 +193,17 @@ stringPtr:
 	.align 4
 backgroundColor:
 	blrl
-	.word 0x00000000
+	.long 0x010101ff
 	.align 4
+textWidth:
+	blrl
+	.long 0x41800000
+	.align 4
+textHeight:
+	blrl
+	.long 0x41a00000
+	.align 4
+
 f1Backup:
 	blrl
 	.quad 0x00000000
@@ -175,6 +222,10 @@ fmtstring1:
 fmtstring2:
 	blrl
 	.string "Y: (%08x) %f\n"
+	.align 4
+fmtstring3:
+	blrl
+	.string "xpos=%04x, ypos=%04x\n"
 	.align 4
 
 # Re-enable develop mode text drawing, then fall-though to the end

@@ -47,19 +47,29 @@ mtlr r0
 .endm
 
 # Functions (NTSC-U 1.02)
-.set OSReport,0x803456a8
-
-.set MenuObjPtr, 0x80003298
-.set WriteMenu, 0x8000329c
-.set UpdateSubtextContents, 0x803a70a0
-.set InitializeSubtext, 0x803a6b98
-
+.set GLOBAL_P1CURSOR_PTR, 0x804a0bc0 
+.set GLOBAL_TEXTDATA_PTR, 0x804d6e18
 .set DevelopMode_Text_Erase, 0x80302bb0
 .set DevelopMode_Text_ResetCursor, 0x80302a3c
 .set DevelopMode_Text_Display, 0x80302d4c
 .set _HSD_MemAlloc, 0x8037f1e4
-
 .set TextData_Create, 0x80302834
 .set TextData_Init, 0x80302810
 .set TextData_Unhide, 0x80302ab0
 .set TextData_SetBackgroundColor, 0x80302b90
+.set TextData_HueUnk2, 0x80302b64
+.set TextData_SetWidthHeight, 0x80302b10
+
+
+# Functions (NTSC-U 1.00)
+#.set GLOBAL_P1CURSOR_PTR, 0x8049ea88
+#.set GLOBAL_TEXTDATA_PTR, 0x804d4c98
+#.set DevelopMode_Text_Erase, 0x80301314
+#.set DevelopMode_Text_ResetCursor, 0x803011a0
+#.set DevelopMode_Text_Display, 0x803014b0
+#.set _HSD_MemAlloc, 0x8037d330
+#.set TextData_Create, 0x80300f98 
+#.set TextData_Init, 0x80300f74
+#.set TextData_Unhide, 0x80301214
+#.set TextData_SetBackgroundColor, 0x803012f4 
+

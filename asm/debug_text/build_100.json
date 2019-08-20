@@ -1,0 +1,18 @@
+{
+  "settings": { "areIncludesRelativeFromFile": true },
+    "outputFiles": [ { "file": "code_ntsc100.txt" } ],
+  "codes": [
+    {
+      "name": "CSS Cursor Debug Text (1.00)",
+      "authors": [ "meta" ],
+      "description": [ "Overlay arbitrary debug text on the screen." ],
+      "build": [
+        {
+          "type": "inject",
+	  "address": "801a4050", 
+          "sourceFile": "main.asm"
+        }
+      ]
+    }
+  ]
+}
