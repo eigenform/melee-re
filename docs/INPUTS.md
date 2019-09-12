@@ -107,7 +107,7 @@ to `0xa4cb8`, meaning: every `0xa4cb8` ticks of the decrementer, an interrupt ca
 is `0xa4cb8 / ((0x09a7ec80 / 4) / 1000)`, which comes out to 16.6666... milliseconds 
 (corresponding _roughly_ to the time it takes to draw a frame).
 
-**FUN FACT!:** _Since NTSC-{U,J} Melee technically run at 59.94Hz, this means that 
+**FUN FACT!:** _Since NTSC-{U,J} Melee technically runs at 59.94Hz, this means that 
 the input polling interval is slightly desynced from the video loop. This means that,
 every ~1000th frame, the polling interval will fall totally out-of-sync and drop
 a frame of input. Great!_
