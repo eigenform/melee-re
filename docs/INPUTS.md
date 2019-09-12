@@ -85,9 +85,10 @@ void EngineLoop()
       // Dispatch all scene-specific code
       TaskScheduler();
 
-      HSD_VICopyXFBASync(0);
       steps_done++;
     }
+    ...
+    HSD_VICopyXFBASync(0);
   }
 }
 ```
