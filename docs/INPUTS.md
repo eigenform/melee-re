@@ -63,14 +63,22 @@ Here's some pseudo-code representing Melee's in-game main engine loop:
 ```c
 void EngineLoop()
 {
+  int steps_todo; 
+
   // The period of this loop is one frame/field
   while (true)
   {
 
-    // Dynamically adjust the number of game-engine steps we perform depending 
-    // on the number of pending entries in the "raw input queue"
-
-    int steps_todo = GetEngineSteps();
+    // This blocks until the queue is not-empty. Depending on the number of
+    // pending entries in the "raw input queue," the next inner loop adjusts
+    // how many game-engine steps will be computed within the next frame.
+    // (This is how Lightning Mode is implemented: 2 steps per frame ?).
+    while (true)
+    {
+      steps_todo = GetEngineSteps();
+      if (steps_todo != 0) break;
+      ...
+    }
 
     // Do some number of game-engine steps
     while (steps_done < steps_todo)
@@ -82,11 +90,12 @@ void EngineLoop()
       // percolate into the various functions used to compute actual game state.
       Do_MasterPadToCopyPad();
 
-      // Dispatch all scene-specific code
+      // Dispatch all scene-specific code (compute one frame of game state)
       TaskScheduler();
-
       steps_done++;
     }
+
+    // Eventually, a frame is copied and scanned out
     ...
     HSD_VICopyXFBASync(0);
   }
