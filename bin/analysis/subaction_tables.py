@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" subaction_tables.py
+""" subaction_tables.py - Dump symbols from subaction tables
 """
 
 import json

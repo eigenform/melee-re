@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" scene_tables.py
+""" scene_tables.py - Dump symbols from scene function tables
 """
 
 import json

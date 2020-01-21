@@ -1,0 +1,7 @@
+*.bin
+*.dol
+*.elf
+*.elf.map
+*.gct
+*.o
+*.d

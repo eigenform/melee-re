@@ -1,3 +1,4 @@
 #!/bin/bash
+# Easy alias for diffing symbol maps
 
 diff -W 180 -y --suppress-common-lines ${1} ${2} | less

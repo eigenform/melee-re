@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" char_global_as.py
+""" char_global_as.py - Dump symbols from global action-state tables
 """
 
 import json

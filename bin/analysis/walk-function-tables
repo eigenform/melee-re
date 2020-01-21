@@ -1,0 +1,21 @@
+#!/bin/bash -e
+# walk-function-tables
+#
+# Use all of the scripts in this directory to walk function tables and produce
+# a set of symbols formatted for use in a Dolphin symbol map.
+#
+# TODO:
+#	- Let scripts return non-zero when detecting duplicates
+#	- So we can error out of this top-level script
+#
+#	- Write a script for consuming the output of all of these, and then
+#	  resolving duplicates across distinct arrays of tables
+# 
+
+python3 stage_tables.py
+python3 char_specific_as.py
+python3 char_global_as.py
+python3 char_specific_anim.py
+python3 scene_tables.py
+python3 item_tables.py
+python3 subaction_tables.py

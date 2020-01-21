@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+
+
+with open("/tmp/test.txt", "r") as f:
+    for line in f:
+        l = line.rstrip("\n").split(" ")
+
+        x = l[0].split(",")
+        x_input = int(x[0], 16)
+        y_input = int(x[1], 16)
+
+        x = l[1].split(",")
+        x_output = int(x[0], 16)
+        y_output = int(x[1], 16)
+
+        x = l[2].split(",")
+        x_float = float(x[0])
+        y_float = float(x[1])
+
+
+        

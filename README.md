@@ -29,16 +29,16 @@ The contents of this map come from:
 
 - [Various old maps](https://smashboards.com/threads/smashboards-community-symbol-map.426763/)
 - [UnclePunch's Training Mode map](https://github.com/UnclePunch/Training-Mode)
-- The contents of [`function_table_analysis.map`](py/analysis/function_table_analysis.map) 
+- The contents of [`function_table_analysis.map`](bin/analysis/function_table_analysis.map) 
 - Functions I've named by-hand while investigating various things
 
-The `py/analysis/` directory contains scripts which are intended to be used
+The `bin/analysis/` directory contains scripts which are intended to be used
 with a Dolphin ram-dump and GALE01 symbol file. These scripts will walk various
 function tables and produce symbols. They currently expect that you move a 
 `ram.raw` and `GALE01.map` into the directory, in case you want to run them
 on your own ram-dump and map.
 
-The [`function_table_analysis.map`](py/analysis/function_table_analysis.map) 
+The [`function_table_analysis.map`](bin/analysis/function_table_analysis.map) 
 in this directory contains my copy of all script output which _should_ result 
 in a list of unique functions. This list *should* be free of duplicates,
 but it's always possible that I may have missed something, so keep that in
@@ -53,29 +53,3 @@ symbols kind of difficult. There are a lot of cases where, in the absence of
 a more "generic" name for some symbol, I've opted to simply rename symbols with
 the set of table indicies or ID values that they're used across. 
 
-## Tools  
-The `py/` directory contains all of the scripts I've collected for doing some
-analysis on Melee (specifically, on the executable, or on Dolphin RAM dumps).
-Here's a rough set of descriptions for some of them:
-
-```
-py/
-├── analysis
-│   ├── char_global_as.py		# Dump symbols from global action-state function tables
-│   ├── char_specific_anim.py		# Dump symbols from character-specific animation function tables
-│   ├── char_specific_as.py		# Dump symbols from character-specific action-state function tables
-│   ├── mapmerge			# Merge Dolphin symbol maps (very hacky)
-│   ├── ntsc102_defs.py			# Definitions specific to NTSC v1.02
-│   ├── ramdump_util.py			# Utility functions for analyzing Dolphin ram dumps
-│   ├── scene_tables.py			# Dump symbols from scene-specific function tables
-│   └── stage_tables.py			# Dump symbols from stage-specific function tables
-├── dolparse				# Parse DOL headers
-└── melee-stack-dump			# Unwind call chains from a ram dump of the stack region
-```
-
-
-## Patches
-The `asm/` directory is basically just a binder for various patches that I've 
-written. Note that, in order to compile particular patches into sets of
-Gecko codes, you will probably need to install devkitPPC (or obtain some
-copy of an assembler targeting GC/Wii) and [JLaferri/gecko](https://github.com/JLaferri/gecko).

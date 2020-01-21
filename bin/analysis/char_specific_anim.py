@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" char_specific_anim.py
+""" char_specific_anim.py - Dump symbols from char-specific animation tables
 """
 
 import json

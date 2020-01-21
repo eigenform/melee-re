@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" stage_tables.py
+""" stage_tables.py - Dump symbols from stage function tables
 """
 
 import json

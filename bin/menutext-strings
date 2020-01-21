@@ -1,0 +1,145 @@
+#!/usr/bin/python
+
+import sys
+
+
+thing = {
+#b'\x1a': " ",
+b'\x20\x00': "0",
+b'\x20\x01':"1",
+b'\x20\x02':"2",  
+b'\x20\x03':"3", 
+b'\x20\x04':"4", 
+b'\x20\x05':"5", 
+b'\x20\x06':"6", 
+b'\x20\x07':"7", 
+b'\x20\x08':"8", 
+b'\x20\x09':"9", 
+b'\x20\x0a':"A", 
+b'\x20\x0b':"B", 
+b'\x20\x0c':"C", 
+b'\x20\x0d':"D", 
+b'\x20\x0e':"E", 
+b'\x20\x0f':"F", 
+b'\x20\x10':"G", 
+b'\x20\x11':"H", 
+b'\x20\x12':"I", 
+b'\x20\x13':"J", 
+b'\x20\x14':"K", 
+b'\x20\x15':"L", 
+b'\x20\x16':"M", 
+b'\x20\x17':"N", 
+b'\x20\x18':"O", 
+b'\x20\x19':"P", 
+b'\x20\x1a':"Q", 
+b'\x20\x1b':"R", 
+b'\x20\x1c':"S", 
+b'\x20\x1d':"T", 
+b'\x20\x1e':"U", 
+b'\x20\x1f':"V", 
+b'\x20\x20':"W", 
+b'\x20\x21':"X", 
+b'\x20\x22':"Y", 
+b'\x20\x23':"Z", 
+b'\x20\x24':"a", 
+b'\x20\x25':"b", 
+b'\x20\x26':"c", 
+b'\x20\x27':"d", 
+b'\x20\x28':"e", 
+b'\x20\x29':"f", 
+b'\x20\x2a':"g", 
+b'\x20\x2b':"h", 
+b'\x20\x2c':"i", 
+b'\x20\x2d':"j", 
+b'\x20\x2e':"k", 
+b'\x20\x2f':"l", 
+b'\x20\x30':"m", 
+b'\x20\x31':"n", 
+b'\x20\x32':"o", 
+b'\x20\x33':"p", 
+b'\x20\x34':"q", 
+b'\x20\x35':"r", 
+b'\x20\x36':"s", 
+b'\x20\x37':"t", 
+b'\x20\x38':"u", 
+b'\x20\x39':"v", 
+b'\x20\x3a':"w", 
+b'\x20\x3b':"x", 
+b'\x20\x3c':"y", 
+b'\x20\x3d':"z",  
+}
+
+
+#b'\x20\xe6'		#,
+#b'\x20\xe7'		#. (period)
+##b'\x20\xe8'		#(high, filled circle)
+#b'\x20\xe9'		#:
+#b'\x20\xea'		#;
+#b'\x20\xeb'		#?
+#b'\x20\xec'		#!
+#b'\x20\xed'		#^
+#b'\x20\xef'		#--
+#b'\x20\xf0'		#/
+#b'\x20\xf1'		#~
+#b'\x20\xf2'		#|
+#b'\x20\xf3'		#' (apostrophe)
+#b'\x20\xf4'		#"
+#b'\x20\xf5'		#(
+#b'\x20\xf6'		#)
+#b'\x20\xf7'		#[
+#b'\x20\xf8'		#]
+#b'\x20\xf9'		#{
+#b'\x20\xfa'		#}
+#b'\x20\xfb'		#+
+#b'\x20\xfc'		#-
+#b'\x20\xfd'		#x (multiplication x)
+#b'\x20\xfe'		#= (equal sign)
+#b'\x20\xff'		#<
+#b'\x21\x00'		#>
+#b'\x21\x01'		#(yen)
+#b'\x21\x02'		#$
+#b'\x21\x03'		#%
+#b'\x21\x04'		##
+#b'\x21\x05'		#&
+#b'\x21\x06'		#* (looks more like a snowflake)
+#b'\x21\x07'		#@
+
+#b'\x20\x3e'		#20e2 = (japanese characters)
+#b'\x20\xe3'		#blank (1a = space? other kinds of spaces as well?)
+#b'\x20\xe4'		#(backwards comma thing?)
+#b'\x20\xe5'		#(low, open circle)
+
+#b'\x21\x08'		#? = japanese characters and weird things
+#b'\x21\x40'		#(lines that move??????? cool)
+
+with open(sys.argv[1], "rb") as f:
+    data = f.read()
+	
+base = 0;
+
+instring = False
+for i in range(len(data)):
+
+    if (instring == True) and (data[base:base+2] == b'\x00\x00'):
+        instring = False
+        sys.stdout.write("\x00")
+        sys.stdout.flush()
+        base += 1
+        break;
+
+    char = thing.get(data[base:base+2])
+    if (char is not None):
+        sys.stdout.write(char)
+        sys.stdout.flush()
+        instring = True
+        base += 2;
+        continue
+    else:
+        #sys.stdout.write("\n")
+        #sys.stdout.flush()
+        base += 1
+        continue
+    
+
+
+

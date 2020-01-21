@@ -65,7 +65,8 @@ void EngineLoop()
 {
   int steps_todo; 
 
-  // The period of this loop is one frame/field
+  // The period of this loop is one frame/field.
+  // We break out of this loop when the scene changes.
   while (true)
   {
 
@@ -73,6 +74,7 @@ void EngineLoop()
     // pending entries in the "raw input queue," the next inner loop adjusts
     // how many game-engine steps will be computed within the next frame.
     // (This is how Lightning Mode is implemented: 2 steps per frame ?).
+
     while (true)
     {
       steps_todo = GetEngineSteps();
@@ -131,3 +133,54 @@ standard libraries in various useful ways.
 In Melee, the decrementer exception handler calls a function named `HSD_PadRenewRawStatus()`, 
 which is a wrapper around `PADRead()`. Data from `PADRead()` is put on a "raw queue" to be 
 consumed when the game engine does a step.
+
+
+# Input/Video Latency-related Patches
+Some quick notes on various common patches that attempt to improve performance.
+
+## Dan Salvato's Polling Drift Fix
+Instead of scheduling the input polling alarm to occur on decrementer exception, 
+call it directly from the engine loop. 
+
+1. NOP over `0x801a4db4` - the branch that causes us to block until `GetEngineSteps()` returns non-zero.
+2. Patch over the call at `0x80019860` that schedules the polling alarm with a branch 
+   directly into the polling alarm (`0x800195fc`).
+3. Inject a branch at `0x801a4da0` (inside the engine loop) that directly calls into 
+   the polling alarm.
+
+## Taukhan's PD+VD Latency Reduction
+1. When initially setting the game engine speed, typically a frame is defined 
+   as `0x3c888889` (0.016666668s). Patch the load at `801a4c24` to instead fix this constant 
+   to `0x3c83126f` (0.016s).
+
+2. Instead of scheduling the alarm, write the alarm function's address to the function pointer 
+   at `0x804c1f5c` (the location of the current post-retrace callback).
+
+3. Free up use of memory at `0x804dbb30` by patching `0x80318d68` (the per-frame function 
+   for stage entities in "Race To The Finish") to load the double at `0x804d79e0` instead.
+
+4. Inject a branch at `0x80376200`. This is the place in `HSD_VICopyXFBASync()` that blocks for 
+   `HSD_VIGetXFBDrawEnable()` by waiting for retrace. 
+   When `HSD_VIGetXFBDrawEnable()` returns -1, write -1 to `0x804dbb30`.
+
+5. Inject a branch at `0x801a5018` (the last line in main engine loop) which:
+	- Increment `steps_done` by 1
+	- Load the word at `0x804dbb30` into r0, check if -1, zero it out
+	- Branch to `0x801a5078` (skips rendering) if the comparison is true
+	
+## FasterMelee's Performance Lag Reduction
+Not sure exactly how this works:
+
+- Patch in GetEngineSteps() right before interrupts are first disabled:
+	- Call `OSSuspendThread(CURRENT_OS_THREAD)`
+- At the very end of the polling alarm function:
+	- Call `OSResumeThread(CURRENT_OS_THREAD)`
+- Replace branch to `HSD_VICopyXFBASync()` in the engine loop:
+	- Call `HSD_VIPostRetraceCB()`
+	- Then, call `HSD_VICopyXFBASync()`
+
+## FasterMelee's Normal Lag Reduction
+Not sure exactly how this works either; seems to remove two dead instructions.
+
+- Skip the assertion in `HSD_VICopyXFBASync()` where (`next XFB != HSD_VI_XFB_DRAWING`)
+- Remove an unused branch at `0x803761ec`

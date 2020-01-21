@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" char_specific_as.py
+""" char_specific_as.py - Dump symbols from char-specific action-state tables
 """
 
 import json

@@ -1,0 +1,24 @@
+#!/usr/bin/python3
+""" gct2gecko - Convert binary GCT to Gecko codes (text format) """
+
+from sys import argv
+from binascii import hexlify, unhexlify
+
+if (len(argv) > 1): 
+    filename = argv[1]
+else: 
+    print("usage: gct2gecko <GCT file>")
+    exit(-1)
+
+with open(filename, "rb") as f:
+    while True:
+        try:
+            data = f.read(8)
+            if (len(data) != 8): break
+            line = hexlify(data).decode('utf-8').upper()
+            c1 = line[0:8]
+            c2 = line[8:]
+            print("{} {}".format(c1, c2))
+        except _ as e:
+            print(e)
+            exit(-1)
