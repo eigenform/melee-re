@@ -148,7 +148,7 @@ call it directly from the engine loop.
 3. Inject a branch at `0x801a4da0` (inside the engine loop) that directly calls into 
    the polling alarm.
 
-## Taukhan's PD+VD Latency Reduction
+## Taukhan's PD+VB Latency Reduction
 1. When initially setting the game engine speed, typically a frame is defined 
    as `0x3c888889` (0.016666668s). Patch the load at `801a4c24` to instead fix this constant 
    to `0x3c83126f` (0.016s).
