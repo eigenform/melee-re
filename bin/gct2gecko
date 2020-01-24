@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ gct2gecko - Convert binary GCT to Gecko codes (text format) """
 
+import os
 from sys import argv
 from binascii import hexlify, unhexlify
 
@@ -11,6 +12,7 @@ else:
     exit(-1)
 
 with open(filename, "rb") as f:
+    print("${}".format(os.path.basename(filename)))
     while True:
         try:
             data = f.read(8)
