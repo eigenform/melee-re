@@ -1,4 +1,4 @@
-# main.asm
+# main.s
 # 
 # Write this on 0x801a4d98, inside `EngineUpdate()` - this will clobber a 
 # `bl USBScreenshot_InitMCC`, which is effectively useless to everyone, unless 
@@ -45,11 +45,11 @@ __allocateMemory:
 	stw r3, 0x0(r4)
 
 	# Instantiate a new TextData object, then save the pointer to it
-	li r3, 1	
-	li r4, 0x10
-	li r5, 0x10
-	li r6, 32
-	li r7, 5
+	li r3, 1		# ???
+	li r4, 0x10		# x offset
+	li r5, 0x10		# y offset
+	li r6, 13		# box width
+	li r7, 3		# box height
 	load_rt r8, stringPtr
 	lwz r8, 0(r8)
 	branchl r11, TextData_Create
@@ -127,65 +127,16 @@ __drawText:
 # __prepareData()
 # Gather 
 
-	# Resolve a pointer to the P1 cursor struct.
-	# If the pointer is null, just do nothing until we're in the CSS.
-	# Otherwise, load the floats and use them to render text.
-	# The cursor structure members we care about are:
-	#	0x0c - f32 x_pos
-	#	0x10 - f32 y_pos
-
-	load r3, GLOBAL_P1CURSOR_PTR
-	lwz r3, 0(r3)
-	cmpwi r3, 0
-	beq __exit
-
-	# Load cursor x position
-	lfs f1, 0x0c(r3)
-	lwz r5, 0x0c(r3)
+	# Load RNG seed
+	load r5, GLOBAL_RNG_SEED
+	lwz r5, 0x00(r5)
 
 	# Update text (note the creqv is necessary to render floating-point)
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, fmtstring1
-	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
+	#creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
 	branchl r11, DevelopMode_Text_Display
-
-	# Load cursor y position
-	load r3, GLOBAL_P1CURSOR_PTR
-	lwz r3, 0(r3)
-	lfs f1, 0x10(r3)
-	lwz r5, 0x10(r3)
-
-	# Update text
-	load_rt r4, textObjPtr
-	lwz r3, 0(r4)
-	load_rt r4, fmtstring2
-	creqv 4*cr1+eq,4*cr1+eq,4*cr1+eq
-	branchl r11, DevelopMode_Text_Display
-
-	load_rt r4, currentFrame
-	lwz r3, 0(r4)
-	cmpwi r3, 2
-
-	addi r3, r3, 1
-	stw r3, 0(r4)
-
-	bne __exit
-
-	# Load x and y video beam pos and update Text
-	load_rt r4, textObjPtr
-	lwz r3, 0(r4)
-	load_rt r4, fmtstring3
-
-	# Write the x/y video beam position
-	load r7, 0xcc002000
-	lhz r5, 0x2e(r7)
-	lhz r6, 0x2c(r7)
-	branchl r11, DevelopMode_Text_Display
-
-	load_rt r4, currentFrame
-	li r3, 0
-	stw r3, 0(r4)
 
 	b __exit
 
@@ -229,7 +180,7 @@ f2Backup:
 	.align 4
 fmtstring1:
 	blrl
-	.string "X: (%08x) %f\n"
+	.string "rng: %08x\n"
 	.align 4
 fmtstring2:
 	blrl

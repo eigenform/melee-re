@@ -1,4 +1,4 @@
 all:
-	gecko build -c build.json
+	gecko build -c build_100.json
 clean:
-	rm codes.txt
+	rm code_ntsc100.txt

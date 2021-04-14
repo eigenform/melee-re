@@ -50,6 +50,7 @@ mtlr r0
 .if BUILD_NTSC_100 == 1
 	.set GLOBAL_P1CURSOR_PTR, 0x8049ea88
 	.set GLOBAL_TEXTDATA_PTR, 0x804d4c98
+	.set GLOBAL_RNG_SEED, 0x804d3e08
 	.set DevelopMode_Text_Erase, 0x80301314
 	.set DevelopMode_Text_ResetCursor, 0x803011a0
 	.set DevelopMode_Text_Display, 0x803014b0
@@ -63,6 +64,7 @@ mtlr r0
 .if BUILD_NTSC_102 == 1
 	.set GLOBAL_P1CURSOR_PTR, 0x804a0bc0 
 	.set GLOBAL_TEXTDATA_PTR, 0x804d6e18
+	.set GLOBAL_RNG_SEED, 0x804d5f90
 	.set DevelopMode_Text_Erase, 0x80302bb0
 	.set DevelopMode_Text_ResetCursor, 0x80302a3c
 	.set DevelopMode_Text_Display, 0x80302d4c
@@ -75,5 +77,18 @@ mtlr r0
 	.set TextData_SetWidthHeight, 0x80302b10
 .endif
 
-
+.if BUILD_PAL == 1
+	.set GLOBAL_RNG_SEED, 0x804c71b8
+	.set GLOBAL_TEXTDATA_PTR, 0x804c8130
+	.set DevelopMode_Text_Erase, 0x803035bc
+	.set DevelopMode_Text_ResetCursor, 0x80303448
+	.set DevelopMode_Text_Display, 0x80303758
+	.set _HSD_MemAlloc, 0x8037f0e8
+	.set TextData_Create, 0x80303240
+	.set TextData_Init, 0x8030321c
+	.set TextData_Unhide, 0x803034bc
+	.set TextData_SetBackgroundColor, 0x8030359c
+	.set TextData_HueUnk2, 0x80303570
+	.set TextData_SetWidthHeight, 0x8030351c
+.endif
 

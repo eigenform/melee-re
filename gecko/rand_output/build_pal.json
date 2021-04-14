@@ -1,15 +1,15 @@
 {
   "settings": { "areIncludesRelativeFromFile": true },
-    "outputFiles": [ { "file": "code_nstc102.bin" } ],
+    "outputFiles": [ { "file": "code_pal.txt" } ],
   "codes": [
     {
-      "name": "CSS Cursor Debug Text (1.00)",
+      "name": "CSS Cursor Debug Text (PAL)",
       "authors": [ "meta" ],
       "description": [ "Overlay arbitrary debug text on the screen." ],
       "build": [
         {
           "type": "inject",
-	  "address": "801a4d98", 
+	  "address": "801a589c", 
           "sourceFile": "main.s"
         }
       ]

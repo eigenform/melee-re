@@ -10,7 +10,7 @@
         {
           "type": "inject",
 	  "address": "801a4d98", 
-          "sourceFile": "main.asm"
+          "sourceFile": "main.s"
         }
       ]
     }
