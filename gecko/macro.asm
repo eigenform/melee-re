@@ -48,6 +48,10 @@ mtlr r0
 .endm
 
 .if BUILD_NTSC_100 == 1
+	.set OSDisableInterrupts, 0x80345738
+	.set OSEnableInterrupts, 0x8034574c
+
+
 	.set GLOBAL_P1CURSOR_PTR, 0x8049ea88
 	.set GLOBAL_TEXTDATA_PTR, 0x804d4c98
 	.set GLOBAL_RNG_SEED, 0x804d3e08
@@ -62,6 +66,9 @@ mtlr r0
 .endif
 
 .if BUILD_NTSC_102 == 1
+	.set OSDisableInterrupts, 0x80347364
+	.set OSEnableInterrupts, 0x80347378
+
 	.set GLOBAL_P1CURSOR_PTR, 0x804a0bc0 
 	.set GLOBAL_TEXTDATA_PTR, 0x804d6e18
 	.set GLOBAL_RNG_SEED, 0x804d5f90
@@ -78,6 +85,9 @@ mtlr r0
 .endif
 
 .if BUILD_PAL == 1
+	.set OSDisableInterrupts, 0x80345ea4
+	.set OSEnableInterrupts, 0x80345eb8
+
 	.set GLOBAL_RNG_SEED, 0x804c71b8
 	.set GLOBAL_TEXTDATA_PTR, 0x804c8130
 	.set DevelopMode_Text_Erase, 0x803035bc

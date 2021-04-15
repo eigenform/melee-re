@@ -12,6 +12,8 @@
 # indicating that we need to fall-through in order to allocate memory.
 __start:
 	backup
+	branchl r11, OSDisableInterrupts
+
 	load_rt r4, f1Backup
 	stfs f1, 0(r4)
 	load_rt r4, f2Backup
@@ -182,20 +184,6 @@ fmtstring1:
 	blrl
 	.string "rng: %08x\n"
 	.align 4
-fmtstring2:
-	blrl
-	.string "Y: (%08x) %f\n"
-	.align 4
-fmtstring3:
-	blrl
-	.string "xpos=%04x, ypos=%04x\n"
-	.align 4
-
-
-# Re-enable develop mode text drawing, then fall-though to the end
-#__enableDrawing:
-#	stw r4, 0x0(r3)
-
 
 # __exit()
 # Restore context and exit this hook
@@ -204,4 +192,6 @@ __exit:
 	lfs f1, 0(r4)
 	load_rt r4, f2Backup
 	lfs f2, 0(r4)
+
+	branchl r11, OSEnableInterrupts
 	restore
