@@ -1,0 +1,28 @@
+{
+  "settings": { "areIncludesRelativeFromFile": true },
+    "outputFiles": [ { "file": "code_pal.txt" } ],
+  "codes": [
+    {
+      "name": "RNG Debug Text (PAL)",
+      "authors": [ "meta" ],
+      "build": [
+        {
+          "type": "inject",
+	  "address": "801a5798", 
+          "sourceFile": "scene_change_hook_pal.s"
+        },
+        {
+          "type": "inject",
+	  "address": "801a589c", 
+          "sourceFile": "perframe_hook_pal.s"
+        },
+
+        {
+          "type": "replaceBinary",
+	  "address": "80196dd4", 
+          "sourceFile": "scene_change.bin"
+        }
+      ]
+    }
+  ]
+}

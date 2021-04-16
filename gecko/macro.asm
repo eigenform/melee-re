@@ -51,7 +51,6 @@ mtlr r0
 	.set OSDisableInterrupts, 0x80345738
 	.set OSEnableInterrupts, 0x8034574c
 
-
 	.set GLOBAL_P1CURSOR_PTR, 0x8049ea88
 	.set GLOBAL_TEXTDATA_PTR, 0x804d4c98
 	.set GLOBAL_RNG_SEED, 0x804d3e08

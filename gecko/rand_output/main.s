@@ -166,11 +166,11 @@ backgroundColor:
 	.align 4
 textWidth:
 	blrl
-	.long 0x41800000
+	.long 0x41400000
 	.align 4
 textHeight:
 	blrl
-	.long 0x41a00000
+	.long 0x41900000
 	.align 4
 f1Backup:
 	blrl
