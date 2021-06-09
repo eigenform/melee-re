@@ -1,0 +1,22 @@
+{
+  "settings": { "areIncludesRelativeFromFile": true },
+    "outputFiles": [ { "file": "code_ntsc.txt" } ],
+  "codes": [
+    {
+      "name": "Engine Template (NTSC v1.02)",
+      "authors": [ "meta" ],
+      "build": [
+        {
+          "type": "replaceBinary",
+	  "address": "801a40f0", 
+          "sourceFile": "hook.bin"
+        },
+        {
+          "type": "replaceBinary",
+	  "address": "8019628c", 
+          "sourceFile": "scene_change.bin"
+        }
+      ]
+    }
+  ]
+}
