@@ -1,30 +1,7 @@
-# Memory Map
+# DOL Layout
 
-Collected notes on sorting the DOL layout, in-terms of source object files.
-The sections in this Markdown file are based on the sections in the DOL.
+These are my notes on determining the layout of object files in the DOL.
 
-The process for working on this is basically:
-
-1. Annotate/analyze disassembly until you are bored
-2. Xref symbol names with parent object files from existing map files
-3. Find functions at the boundaries of source object files
-4. Go back to step 1
-
-Map files are shipped inside some retail titles. This allows us to get a rough
-picture of the layout by cross-referencing things. 
-
-The Melee DOL includes strings which hint at the naming convention for certain 
-source files. I've tried to integrate these where possible. As we approach a 
-complete symbol map, ideally we should be able to provide the atom for some
-reproduction of the actual map used when the game was linked up.
-
-Boundaries here are all based on _my_ Dolphin symbol map at the time I was 
-looking into them, so some symbol names here may be out-of-sync with the ones
-in the map, or with the ones in other maps.
-
-## Text section 0
-Seems like low-level utility functions live here. The interrupt table is also 
-loaded in here.
 
 ```
 # -----------------------------------------------------------------------------
@@ -44,13 +21,9 @@ mem_TRK.o		80003244 (TRK_memcpy)
 # looking at other maps. Looks like `__TRK_reset` or something might be placed
 # immediately after this, in our case? Not sure about this.
 #
-__exception.o		80003298 (gTRKInterruptVectorTable)
+__exception.o	80003298 (gTRKInterruptVectorTable)
 __start.o		800051ec (__check_pad3)
 ```
-
-## Data section 0
-The actual entrypoint and most of the low-level initialization stuff from 
-the Gamecube libraries seems to be in this region.
 
 ```
 # -----------------------------------------------------------------------------
@@ -58,99 +31,83 @@ the Gamecube libraries seems to be in this region.
 
 # This is the entrypoint for the DOL
 __start.o		8000522c (__start)
-
 ```
-
-## Data section 1
-This region seems to be filled with a bunch of pointers to various functions.
-Dolphin never seems to pick up accesses on this region. I don't understand 
-what lives here [yet].
 
 ```
 # -----------------------------------------------------------------------------
 # Data section 1: 0x800056c0 - 0x80005940, size=0x00000280, offset=0x003b3fc0
-
 TODO
 ```
-
-
-## Text section 1
-This is where all of the actual game code and libraries are loaded.
-I wouldn't be surprised if there are small data sections scattered about this 
-region.
 
 ```
 # -----------------------------------------------------------------------------
 # Text section 1: 0x80005940 - 0x803b7240, size=0x003b1900, offset=0x00002520
 
+# Start of a bunch of GFX/color animation functions.
+			80013bb0
+
+# This is the start of various memory management functions, archived file
+# management, and other things.
+			80014e24 (Heap_CreatePersistentHeap)
+
+# This seems to be the start of the top-level engine functions.
+			80019230
+
+# This is the start of various memory card related functions.
+			80019bb8
+
+# Start of animation/movie related functions?
+			8001e2f8
+
+# Start of music/SFX/DSP/audio-related functions?
+			8002305c
+
+# Start of camera-related functions?
+# Some functions assert with "camera.c".
+			80028b9c
+
 # Static player block setters/getters seem to start around here.
 			800322c0
 
+# ECB and collision-related functions?
+			80041c8c
 
 # Some subaction event functions live here
 			80071028
-
 
 # This is the first instance of one of the `AnimInterrupt` functions from the
 # "global" array of animation function tables (non-character specific).
 			8008a494
 
-
-
-
 # Character OnLoad functions start here. Character-specific functions in the 
 # animation tables (for special moves?) appear to live inside these regions.
 
 			800e0960 (onload_Mario)
-
  			800e2aec (onload_CaptFalcon)
-
  			800e57ac (onload_Fox)
-
  			800eae44 (onload_Link)
-
  			800ee680 (onload_Kirby)
-
  			8010d9ac (onload_DonkeyKong)
-
  			801100ec (onload_Shiek)
-
  			8011480c (onload_Ness)
-
  			8011b628 (onload_Peach)
-
  			8011ef3c (onload_Popo)
-
  			80122edc (onload_Nana)
-
  			801243e4 (onload_Pikachu)
-
  			8012837c (onload_Samus)
-
  			8012b99c (onload_Yoshi)
-
  			80132abc (onload_Bowser)
-
  			801364ac (onload_Marth)
-
  			80139334 (onload_Zelda)
-
  			8013c67c (onload_Jigglypuff)
-
  			80142324 (onload_Luigi)
-
  			80144e48 (onload_Mewtwo)
-
  			80148ce4 (onload_YoungLink)
-
  			801494e4 (onload_DrMario)
  			80149cc4 (onload_Falco)
  			80149e34 (onload_Pichu)
-
  			8014a37c (onload_GameAndWatch)
-
  			8014ee1c (onload_Ganon)
-
  			8014f124 (onload_Roy)
  			8014f3dc (onload_BoyWireframe)
  			8014f440 (onload_GirlWireframe)
@@ -159,20 +116,21 @@ region.
  			8014fc6c (onload_MasterHand)
  			80155e1c (onload_CrazyHand)
 
-
-
 # Functions from the minor scene shared function tables are around here.
 # Functions related to "InGame" scenes? 
 			8016d32c
+
 # Functions related to "ResultScreen" scenes?
 			80177368
+
 # Classic/AllStar/Adventure Mode Splash screen scene functions?
 			80186dfc
+
 # Tournament mode scene functions?
 			8019628c
+
 # Functions related to "ResultScreen" scenes seem to live around here
 			80177368
-
 
 # Functions from the minor scene tables start here, arranged in blocks related
 # to the associated major scene, starting with MainDebugMenu functions
@@ -263,8 +221,8 @@ serpoll.o		803274dc (TRKTestForPacket)
 dispatch.o		803276a8 (TRKInitializeDispatcher)
 msghndlr.o		80327740 (TRKMessageIntoReply)
 
-dolphin_trk.o		8032a628 (InitMetroTRK)
-mpc_7xx_603e.o		8032a868 (TRKSaveExtended1Block)
+dolphin_trk.o	8032a628 (InitMetroTRK)
+mpc_7xx_603e.o	8032a868 (TRKSaveExtended1Block)
 main_TRK.o		8032abe0 (TRK_main)
 
 dolphin_trk_glue.o	8032add4 (TRKInitializeIntDrivenUART)
@@ -298,13 +256,13 @@ mtxvec.o		80342aa8 (PSMTXMUltiVec / C_MTXMultVec)
 os.o			80342e94 (OSGetConsoleType)
 OSAlloc.o		80343e44 (DLInsert)
 OSArena.o		803444c8 (OSGetArenaHi)
-OSAudioSystem.o		80344534 (__OSInitAudioSystem)
+OSAudioSystem.o	80344534 (__OSInitAudioSystem)
 OSCache.o		803447c8 (DCEnable)
 OSContext.o		80344e30 (OSLoadFPUContext)
 OSError.o		803456a8 (OSReport)
 EXIBios.o		80345a70 (SetExiInterruptMask)
 OSFont.o		8034730c (OSGetFontEncode)
-OSInterrupt.o		80347364 (OSDisableInterrupts)
+OSInterrupt.o	80347364 (OSDisableInterrupts)
 OSLink.o		80347bcc (__OSModuleInit)
 OSContext.o		80347be4 (OSGetCurrentContext)
 OSMemory.o		80347bfc (OSOnReset)
@@ -329,20 +287,20 @@ ai.o			803503e4 (AIRegisterDMACallback)
 ar.o			80350cd0 (ARStartDMA)
 arq.o			80351edc (__ARQServiceQueueLo)
 CARDBios.o		80352270 (__CARDDefaultApiCallback)
-CARDUnlock.o		8035350c (bitrev)
+CARDUnlock.o	8035350c (bitrev)
 CARDRdwr.o		80354720 (BlockReadCallback)
 CARDBlock.o		803549b8 (__CARDGetFatBlock)
 CARDDir.o		80354dbc (__CARDGetDirBlock)
 CARDCheck.o		80355020 (__CARDCheckSum)
 CARDMount.o		80355f5c (CARDProbe)
-CARDFormat.o		80356970 (FormatCallback)
+CARDFormat.o	80356970 (FormatCallback)
 CARDOpen.o		80357154 (__CARDCompareFileName)
-CARDCreate.o		80357708 (CreateCallbackFat)
+CARDCreate.o	80357708 (CreateCallbackFat)
 CARDRead.o		80357a58 (__CARDSeek)
 CARDWrite.o		80357ed0 (WriteCallback)
-CARDDelete.o		8035824c (DeleteCallback)
+CARDDelete.o	8035824c (DeleteCallback)
 CARDStat.o		80358400 (UpdateIconOffsets)
-CARDRename.o		80358898 (CARDRenameAsync)
+CARDRename.o	80358898 (CARDRenameAsync)
 AX.o			80358a94 (AXInitEx)
 AXAlloc.o		80358ac8 (__AXGetStackHead)
 AXAux.o			80358f90 (__AXAuxInit)
@@ -352,7 +310,7 @@ AXSPB.o			80359d8c (__AXGetStudio?)
 AXVPB.o			8035a250 (__AXGetNumVoices)
 AXProf.o		8035b678 (__AXGetCurrentProfile)
 reverb_hi.o		8035b6c0 (ReverbHICreate)
-reverb_std.o		8035c504 (ReverbSTDCreate)
+reverb_std.o	8035c504 (ReverbSTDCreate)
 chorus.o		8035cea8 (do_src1)
 delay.o			8035d890 (AXFXDelayCallback)
 axfx.o			8035dd3c (__AXFXAllocFunction)
@@ -378,10 +336,10 @@ fobj.o			8036a938 (HSD_FObjGetAllocData?)
 
 pobj.o			8036b8d0 (HSD_PObjGetFlags)
 jobj.o			8036ec10 (HSD_JObjCheckDepend)
-displayfunc.o		803738a0 (HSD_ZListInitAllocData)
-initialize.o		80374e48 (HSD_InitComponent)
+displayfunc.o	803738a0 (HSD_ZListInitAllocData)
+initialize.o	80374e48 (HSD_InitComponent)
 video.o			8037588c (HSD_VISearchXFBByStatus)
-controller.o		8037699c (HSD_PadGetRawQueueCount)
+controller.o	8037699c (HSD_PadGetRawQueueCount)
 rumble.o		80378090 (HSD_PadRumbleOn)
 spline.o		80378a34 (splGetHelmite)
 mtx.o			80379598 (HSD_MtxInverseConcat)
@@ -419,38 +377,22 @@ texpdiag.o		80385798 (assign_reg)
 			803a949c
 
 ```
-
-
-## Data section 2
-
-```
 # -----------------------------------------------------------------------------
 # Data section 2: 0x803b7240 - 0x803b7260, size=0x00000020, offset=0x003b4240
-
 TODO
 ```
-
-## Data section 3
 
 ```
 # -----------------------------------------------------------------------------
 # Data section 3: 0x803b7260 - 0x803b7280, size=0x00000020, offset=0x003b4260
-
 TODO
 ```
-
-## Data section 4
 
 ```
 # -----------------------------------------------------------------------------
 # Data section 4: 0x803b7280 - 0x803b9840, size=0x000025c0, offset=0x003b4280
-
 TODO
 ```
-
-## Data section 5
-
-Lots of important structures are loaded from the DOL into this region.
 
 ```
 # -----------------------------------------------------------------------------
@@ -574,26 +516,17 @@ Lots of important structures are loaded from the DOL into this region.
 			803e9754 (stage_ft_targetgnw)
 			803e981c (stage_ft_targetroy)
 			803e98dc (stage_ft_targetganon)
-```
-
-## Data section 6
 
 ```
 # -----------------------------------------------------------------------------
 # Data section 6: 0x804d36a0 - 0x804d63a0, size=0x00002d00, offset=0x0042e6c0
-
 TODO
 ```
-
-## Data section 7
 
 ```
 # -----------------------------------------------------------------------------
 # Data section 7: 0x804d79e0 - 0x804dec00, size=0x00007220, offset=0x004313c0
-
 TODO
 ```
 
 
-After this, the stack region starts at `0x804dec00`.
-After the stack should mostly be space for dynamically-allocated memory.
