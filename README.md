@@ -1,7 +1,3 @@
-![hosaka-corp/melee-re](banner.png)
-
-<br>
-
 This is a collection of scripts and technical documentation used for analyzing
 Super Smash Bros. Melee. Right now there basically three or four goals for this project:
 
