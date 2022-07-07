@@ -1,0 +1,18 @@
+{
+  "settings": { "areIncludesRelativeFromFile": true },
+    "outputFiles": [ { "file": "code_ntsc102.txt" } ],
+  "codes": [
+    {
+      "name": "Rumble on Stage Load (NTSC v1.02)",
+      "authors": [ "meta" ],
+      "description": [ "Send a rumble command to port 1 on stage load." ],
+      "build": [
+        {
+          "type": "inject",
+	      "address": "8016e94c", 
+          "sourceFile": "main.s"
+        }
+      ]
+    }
+  ]
+}
