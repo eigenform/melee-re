@@ -1,0 +1,66 @@
+#!/usr/bin/python3
+""" fill-snapshot - split data across an unpacked snapshot file """
+
+import os, sys
+import struct
+import binascii
+
+from meleegci import *
+from ssbmpack import pack, unpack
+print(sys.argv)
+if len(sys.argv) < 4:
+    print("Usage: fill-snapshot.py <input unpacked GCI> <input binary data> <output unpacked GCI>")
+    print(" Take the input binary data and break it up across all blocks in the snapshot")
+    print(" (so as to make the GCI un-pack into a contiguous region in RAM)")
+    exit(0)
+else:
+    input_fn = sys.argv[1]
+    input_bin = sys.argv[2]
+    output_fn = sys.argv[3]
+
+# -----------------------------------------------------------------------------
+
+# Load some payload binary from a file
+with open(input_bin, "rb") as f:
+    payload_data = f.read()
+    payload_len = len(payload_data)
+print("[*] Read {} bytes of data from input file {}".format(hex(payload_len),
+    input_bin))
+
+BASE_OFFSET = 0x2060
+DATA_SIZE   = 0x1fe0
+
+input_gci = melee_snapshot(input_fn, packed=False)
+blocks = input_gci.blocksize()
+print("[*] Input GCI has {} blocks".format(blocks))
+print("[*] There are {} bytes of free space in this GCI".format(
+    hex((blocks - 1) *DATA_SIZE)))
+
+if (payload_len > ((blocks-1) *DATA_SIZE)):
+    print("[!] Your input data won't fit in this GCI ({} bytes too large)".format(
+        payload_len - ((blocks-1)*DATA_SIZE)))
+    exit(-1)
+
+FULL_BLOCKS = (payload_len // DATA_SIZE)
+
+OFF = 0
+for i in range(FULL_BLOCKS):
+    print("[*] Copying {} bytes from offset {} to offset {} in GCI".format(
+        hex(DATA_SIZE), hex(OFF), hex(BASE_OFFSET)))
+    input_gci.raw_bytes[BASE_OFFSET:BASE_OFFSET+DATA_SIZE] = payload_data[OFF:OFF+DATA_SIZE]
+    BASE_OFFSET += 0x2000
+    OFF += DATA_SIZE
+
+REMAINING = (payload_len - OFF)
+
+print("[*] Copying {} bytes from offset {} to offset {} in GCI".format(
+    hex(REMAINING), hex(OFF), hex(BASE_OFFSET)))
+input_gci.raw_bytes[BASE_OFFSET:BASE_OFFSET+REMAINING] = payload_data[OFF:OFF+REMAINING]
+
+# -----------------------------------------------------------------------------
+# Write the new GCI to a file
+
+print("Writing to {}".format(output_fn))
+ofd = open(output_fn, "wb")
+ofd.write(input_gci.raw_bytes)
+ofd.close()
