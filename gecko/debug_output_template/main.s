@@ -172,16 +172,22 @@ __drawText:
 
 	bne __exit
 
-	# Load x and y video beam pos and update Text
+	# Load the RNG seed and update text object
 	load_rt r4, textObjPtr
 	lwz r3, 0(r4)
 	load_rt r4, fmtstring3
-
-	# Write the x/y video beam position
-	load r7, 0xcc002000
-	lhz r5, 0x2e(r7)
-	lhz r6, 0x2c(r7)
+	load r5, GLOBAL_RNG_SEED
+	lwz r5, 0x00(r5)
 	branchl r11, DevelopMode_Text_Display
+
+	# Load x/y video beam pos. and update text object
+	#load_rt r4, textObjPtr
+	#lwz r3, 0(r4)
+	#load_rt r4, fmtstring3
+	#load r7, 0xcc002000
+	#lhz r5, 0x2e(r7)
+	#lhz r6, 0x2c(r7)
+	#branchl r11, DevelopMode_Text_Display
 
 	load_rt r4, currentFrame
 	li r3, 0
@@ -237,7 +243,7 @@ fmtstring2:
 	.align 4
 fmtstring3:
 	blrl
-	.string "xpos=%04x, ypos=%04x\n"
+	.string "rng=%08x\n"
 	.align 4
 
 
