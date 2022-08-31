@@ -1,9 +1,9 @@
 {
   "settings": { "areIncludesRelativeFromFile": true },
-    "outputFiles": [ { "file": "code_nstc102.txt" } ],
+    "outputFiles": [ { "file": "code_ntsc102.txt" } ],
   "codes": [
     {
-      "name": "CSS Cursor Debug Text (1.00)",
+      "name": "CSS Cursor Debug Text (1.02)",
       "authors": [ "meta" ],
       "description": [ "Overlay arbitrary debug text on the screen." ],
       "build": [
